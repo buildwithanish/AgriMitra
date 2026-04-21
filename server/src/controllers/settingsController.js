@@ -15,7 +15,7 @@ function sanitizeSettings(settings, { admin = false } = {}) {
     };
   }
 
-  const { aiKeys, ...publicSettings } = settings;
+  const { aiKeys, announcements, apiKeyToggles, ...publicSettings } = settings;
   return publicSettings;
 }
 

@@ -33,6 +33,14 @@ const defaultAdmin = {
     activeSensors: "2,408",
     predictionAccuracy: "93.4%"
   },
+  activeSessions: 12,
+  featureUsage: {
+    crop: 31,
+    yield: 22,
+    pest: 18,
+    market: 17,
+    insurance: 12
+  },
   revenueTrend: [
     { month: "Jan", revenue: 68 },
     { month: "Feb", revenue: 74 },
@@ -97,6 +105,15 @@ export default function AdminPage() {
   const [dashboard, setDashboard] = useState(defaultAdmin);
   const [voiceQuery, setVoiceQuery] = useState("");
   const [adminError, setAdminError] = useState("");
+  const [creatingUser, setCreatingUser] = useState(false);
+  const [newUser, setNewUser] = useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "farmer",
+    subscriptionPlan: "starter",
+    farmCount: 1
+  });
   const planMix = useMemo(() => {
     return dashboard.users.reduce((accumulator, item) => {
       const key = item.plan || item.subscriptionPlan || "starter";
@@ -122,6 +139,8 @@ export default function AdminPage() {
           users: userResponse.data?.users || current.users,
           sensors: sensorResponse.data?.sensors || current.sensors,
           contactLeads: contactResponse.data?.leads || current.contactLeads,
+          activeSessions: analyticsResponse.data?.activeSessions || current.activeSessions,
+          featureUsage: analyticsResponse.data?.featureUsage || current.featureUsage,
           predictionMix: analyticsResponse.data?.predictionMix || current.predictionMix,
           revenueTrend: analyticsResponse.data?.revenueTrend || current.revenueTrend,
           userGrowth: analyticsResponse.data?.userGrowth || current.userGrowth,
@@ -160,6 +179,41 @@ export default function AdminPage() {
     }
   }
 
+  async function createUserRecord(event) {
+    event.preventDefault();
+    setCreatingUser(true);
+
+    try {
+      const response = await api.post("/admin/users", newUser);
+      const createdUser = response.data?.user;
+
+      if (createdUser) {
+        setDashboard((current) => ({
+          ...current,
+          users: [createdUser, ...current.users],
+          metrics: {
+            ...current.metrics,
+            totalUsers: String((current.users?.length || 0) + 1)
+          }
+        }));
+      }
+
+      setNewUser({
+        name: "",
+        email: "",
+        password: "",
+        role: "farmer",
+        subscriptionPlan: "starter",
+        farmCount: 1
+      });
+      setAdminError("");
+    } catch (error) {
+      setAdminError(error.message);
+    } finally {
+      setCreatingUser(false);
+    }
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -189,7 +243,7 @@ export default function AdminPage() {
             <MetricCard label="Total users" value={dashboard.metrics.totalUsers} delta="+14.8%" />
             <MetricCard label="Monthly revenue" value={dashboard.metrics.monthlyRevenue} delta="MRR" tone="accent" />
             <MetricCard label="Active sensors" value={dashboard.metrics.activeSensors} delta="97% uptime" />
-            <MetricCard label="Prediction accuracy" value={dashboard.metrics.predictionAccuracy} delta="weighted" tone="success" />
+            <MetricCard label="Prediction accuracy" value={dashboard.metrics.predictionAccuracy} delta={`${dashboard.activeSessions} active sessions`} tone="success" />
           </div>
 
           <div id="admin-revenue" className="scroll-mt-8 grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
@@ -271,6 +325,22 @@ export default function AdminPage() {
                   </div>
                 ))}
               </div>
+
+              <div className="mt-6 rounded-[24px] border border-slate-200/70 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary-700 dark:text-primary-300">
+                  Feature usage
+                </p>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {Object.entries(dashboard.featureUsage || {}).slice(0, 6).map(([key, value]) => (
+                    <div key={key} className="rounded-2xl bg-slate-100/80 px-4 py-3 dark:bg-white/5">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
+                        {key}
+                      </p>
+                      <p className="mt-2 text-lg font-bold text-slate-950 dark:text-white">{value} runs</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </GlassPanel>
           </div>
 
@@ -312,6 +382,56 @@ export default function AdminPage() {
               </div>
 
               <div className="mt-6 overflow-x-auto">
+                <form onSubmit={createUserRecord} className="mb-6 grid gap-4 rounded-[24px] border border-slate-200/70 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5 md:grid-cols-2 xl:grid-cols-6">
+                  <input
+                    value={newUser.name}
+                    onChange={(event) => setNewUser((current) => ({ ...current, name: event.target.value }))}
+                    placeholder="Full name"
+                    className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none dark:border-white/10 dark:bg-white/5"
+                    required
+                  />
+                  <input
+                    type="email"
+                    value={newUser.email}
+                    onChange={(event) => setNewUser((current) => ({ ...current, email: event.target.value }))}
+                    placeholder="Email"
+                    className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none dark:border-white/10 dark:bg-white/5"
+                    required
+                  />
+                  <input
+                    type="password"
+                    value={newUser.password}
+                    onChange={(event) => setNewUser((current) => ({ ...current, password: event.target.value }))}
+                    placeholder="Password"
+                    className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none dark:border-white/10 dark:bg-white/5"
+                    required
+                  />
+                  <select
+                    value={newUser.role}
+                    onChange={(event) => setNewUser((current) => ({ ...current, role: event.target.value }))}
+                    className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none dark:border-white/10 dark:bg-white/5"
+                  >
+                    <option value="farmer">Farmer</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                  <select
+                    value={newUser.subscriptionPlan}
+                    onChange={(event) => setNewUser((current) => ({ ...current, subscriptionPlan: event.target.value }))}
+                    className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none dark:border-white/10 dark:bg-white/5"
+                  >
+                    <option value="starter">Starter</option>
+                    <option value="growth">Growth</option>
+                    <option value="enterprise">Enterprise</option>
+                  </select>
+                  <button
+                    type="submit"
+                    disabled={creatingUser}
+                    className="rounded-2xl bg-primary-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary-500 disabled:opacity-70"
+                  >
+                    {creatingUser ? "Creating..." : "Create user"}
+                  </button>
+                </form>
+
                 <table className="min-w-full text-left">
                   <thead>
                     <tr className="text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
@@ -352,10 +472,27 @@ export default function AdminPage() {
                         </td>
                         <td className="py-4 pr-4 text-slate-700 dark:text-slate-200">{item.farms}</td>
                         <td className="py-4">
-                          <span className="inline-flex items-center gap-2 rounded-full bg-primary-500/10 px-3 py-1 font-semibold text-primary-700 dark:text-primary-300">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 font-semibold ${
+                              item.isBlocked || item.status === "blocked"
+                                ? "bg-red-500/10 text-red-600 dark:text-red-300"
+                                : "bg-primary-500/10 text-primary-700 dark:text-primary-300"
+                            }`}>
                             <Radar className="h-3.5 w-3.5" />
-                            Active
-                          </span>
+                              {item.isBlocked || item.status === "blocked" ? "Blocked" : "Active"}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => updateUserRecord(item._id, { isBlocked: !(item.isBlocked || item.status === "blocked") })}
+                              className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                                item.isBlocked || item.status === "blocked"
+                                  ? "bg-primary-500/10 text-primary-700 dark:text-primary-300"
+                                  : "bg-red-500/10 text-red-600 dark:text-red-300"
+                              }`}
+                            >
+                              {item.isBlocked || item.status === "blocked" ? "Unblock" : "Block"}
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}

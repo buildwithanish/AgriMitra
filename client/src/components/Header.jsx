@@ -18,6 +18,7 @@ import { useContactModal } from "../contexts/ContactModalContext";
 import { useSettings } from "../contexts/SettingsContext";
 import { headerNavigation, topBarInfo } from "../data/marketing";
 import AnnouncementBar from "./AnnouncementBar";
+import AppLink from "./AppLink";
 
 function DesktopLink({ item, onContactClick }) {
   if (item.action === "contact-modal") {
@@ -33,12 +34,12 @@ function DesktopLink({ item, onContactClick }) {
   }
 
   return (
-    <a
+    <AppLink
       href={item.href}
       className="inline-flex items-center text-sm font-semibold text-slate-700 transition hover:text-primary-700 dark:text-slate-200 dark:hover:text-primary-300"
     >
       {item.label}
-    </a>
+    </AppLink>
   );
 }
 
@@ -77,7 +78,7 @@ function MegaMenu({ item, onClose, onContactClick }) {
                       <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">{entry.description}</p>
                     </button>
                   ) : (
-                    <a
+                    <AppLink
                       key={entry.label}
                       href={entry.href}
                       onClick={onClose}
@@ -88,7 +89,7 @@ function MegaMenu({ item, onClose, onContactClick }) {
                         <ArrowRight className="h-4 w-4 text-primary-600 opacity-0 transition group-hover:opacity-100" />
                       </div>
                       <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">{entry.description}</p>
-                    </a>
+                    </AppLink>
                   )
                 ))}
               </div>
@@ -113,14 +114,14 @@ function MegaMenu({ item, onClose, onContactClick }) {
                 </span>
               ))}
             </div>
-            <a
+            <AppLink
               href="/#about"
               onClick={onClose}
               className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-white px-4 py-3 font-semibold text-primary-900 transition hover:-translate-y-0.5"
             >
               Learn more
               <ArrowRight className="h-4 w-4" />
-            </a>
+            </AppLink>
           </div>
         </div>
       </div>
@@ -168,7 +169,7 @@ function DropdownMenu({ item, onClose, onContactClick }) {
                             <ArrowRight className="h-3.5 w-3.5 opacity-0 transition group-hover:opacity-100" />
                           </button>
                         ) : (
-                          <a
+                          <AppLink
                             key={child.label}
                             href={child.href}
                             onClick={onClose}
@@ -176,7 +177,7 @@ function DropdownMenu({ item, onClose, onContactClick }) {
                           >
                             <span>{child.label}</span>
                             <ArrowRight className="h-3.5 w-3.5 opacity-0 transition group-hover:opacity-100" />
-                          </a>
+                          </AppLink>
                         )
                       ))}
                     </div>
@@ -196,7 +197,7 @@ function DropdownMenu({ item, onClose, onContactClick }) {
                       <ArrowRight className="h-4 w-4 opacity-0 transition group-hover:opacity-100" />
                     </button>
                   ) : (
-                    <a
+                    <AppLink
                       key={entry.label}
                       href={entry.href}
                       onClick={onClose}
@@ -204,7 +205,7 @@ function DropdownMenu({ item, onClose, onContactClick }) {
                     >
                       <span>{entry.label}</span>
                       <ArrowRight className="h-4 w-4 opacity-0 transition group-hover:opacity-100" />
-                    </a>
+                    </AppLink>
                   )
                 )
               )}
@@ -231,14 +232,14 @@ function DropdownMenu({ item, onClose, onContactClick }) {
                   </span>
                 ))}
               </div>
-              <a
+              <AppLink
                 href={item.spotlight.href}
                 onClick={onClose}
                 className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-white px-4 py-3 font-semibold text-primary-900 transition hover:-translate-y-0.5"
               >
                 Explore
                 <ArrowRight className="h-4 w-4" />
-              </a>
+              </AppLink>
             </div>
           </div>
         )}
@@ -268,14 +269,14 @@ function MobileMenuItem({ item, openItem, setOpenItem, onNavigate, onContactClic
     }
 
     return (
-      <a
+      <AppLink
         href={item.href}
         onClick={onNavigate}
         className="flex items-center justify-between rounded-2xl border border-slate-200/80 bg-white/80 px-4 py-4 text-sm font-semibold text-slate-800 dark:border-white/10 dark:bg-white/5 dark:text-white"
       >
         <span>{item.label}</span>
         <ArrowRight className="h-4 w-4 text-primary-600" />
-      </a>
+      </AppLink>
     );
   }
 
@@ -323,14 +324,14 @@ function MobileMenuItem({ item, openItem, setOpenItem, onNavigate, onContactClic
                             {child.label}
                           </button>
                         ) : (
-                          <a
+                          <AppLink
                             key={child.label}
                             href={child.href}
                             onClick={onNavigate}
                             className="block rounded-xl px-2 py-2 text-sm text-slate-600 transition hover:bg-primary-500/8 hover:text-primary-700 dark:text-slate-300 dark:hover:text-primary-200"
                           >
                             {child.label}
-                          </a>
+                          </AppLink>
                         )
                       ))}
                     </div>
@@ -349,14 +350,14 @@ function MobileMenuItem({ item, openItem, setOpenItem, onNavigate, onContactClic
                       {entry.label}
                     </button>
                   ) : (
-                    <a
+                    <AppLink
                       key={entry.label}
                       href={entry.href}
                       onClick={onNavigate}
                       className="block rounded-2xl px-3 py-3 text-sm font-medium text-slate-600 transition hover:bg-primary-500/8 hover:text-primary-700 dark:text-slate-300 dark:hover:text-primary-200"
                     >
                       {entry.label}
-                    </a>
+                    </AppLink>
                   )
                 )
               )}

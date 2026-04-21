@@ -12,6 +12,7 @@ import sensorRoutes from "./routes/sensorRoutes.js";
 import settingsRoutes from "./routes/settingsRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import subscriptionRoutes from "./routes/subscriptionRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import { authorize, protect } from "./middleware/auth.js";
 import { errorHandler, notFound } from "./middleware/errorHandler.js";
 import { env } from "./config/env.js";
@@ -67,6 +68,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/user", protect, userRoutes);
 app.use("/api/ai", protect, aiRoutes);
 app.use("/api/features", protect, featureRoutes);
 app.use("/api/dashboard", protect, dashboardRoutes);

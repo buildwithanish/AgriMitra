@@ -14,6 +14,8 @@ export function AuthProvider({ children }) {
     }
 
     const rawUser = localStorage.getItem("ai-village-brain-user");
+    const token = localStorage.getItem("ai-village-brain-token");
+
     if (rawUser) {
       try {
         setUser(JSON.parse(rawUser));
@@ -23,7 +25,28 @@ export function AuthProvider({ children }) {
       }
     }
 
-    setLoading(false);
+    async function hydrateSession() {
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await api.get("/auth/me");
+        if (response.user) {
+          localStorage.setItem("ai-village-brain-user", JSON.stringify(response.user));
+          setUser(response.user);
+        }
+      } catch {
+        localStorage.removeItem("ai-village-brain-user");
+        localStorage.removeItem("ai-village-brain-token");
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    hydrateSession();
   }, []);
 
   async function login(credentials) {

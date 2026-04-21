@@ -29,7 +29,7 @@ export default function Features() {
       <SectionHeading
         eyebrow="AI Feature Stack"
         title={settings.content.featuresHeadline}
-        description="A refined product surface that turns advanced agriculture capabilities into clear, usable workflows."
+        description={settings.content.featuresDescription}
         align="center"
       />
 

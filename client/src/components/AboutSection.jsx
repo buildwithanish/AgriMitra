@@ -3,6 +3,7 @@ import { ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
 import GlassPanel from "./GlassPanel";
 import SectionHeading from "./SectionHeading";
 import { aboutHighlights } from "../data/marketing";
+import AppLink from "./AppLink";
 
 export default function AboutSection() {
   return (
@@ -78,13 +79,13 @@ export default function AboutSection() {
                 </div>
               </div>
 
-              <a
+              <AppLink
                 href="/#services"
                 className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary-700 transition hover:text-primary-600 dark:text-primary-300"
               >
                 Explore platform services
                 <ArrowRight className="h-4 w-4" />
-              </a>
+              </AppLink>
             </div>
           </GlassPanel>
         </motion.div>

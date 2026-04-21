@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import SectionHeading from "./SectionHeading";
 import { services } from "../data/marketing";
+import AppLink from "./AppLink";
 
 export default function ServicesSection() {
   return (
@@ -30,13 +31,13 @@ export default function ServicesSection() {
               </div>
               <h3 className="mt-6 font-display text-2xl font-bold text-slate-950 dark:text-white">{service.title}</h3>
               <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300">{service.description}</p>
-              <a
+              <AppLink
                 href="/features"
                 className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary-700 transition group-hover:translate-x-1 dark:text-primary-300"
               >
                 Learn more
                 <ArrowRight className="h-4 w-4" />
-              </a>
+              </AppLink>
             </motion.article>
           );
         })}

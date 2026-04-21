@@ -20,6 +20,11 @@ export const protect = asyncHandler(async (req, res, next) => {
     throw new Error("Invalid token");
   }
 
+  if (user.isBlocked) {
+    res.status(403);
+    throw new Error("Your account is blocked. Please contact the administrator");
+  }
+
   req.user = user;
   next();
 });

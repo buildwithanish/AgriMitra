@@ -4,6 +4,7 @@ import { ArrowRight, ChevronLeft, ChevronRight, Sparkles, Waves } from "lucide-r
 import { premiumHeroSlides } from "../data/marketing";
 import { useContactModal } from "../contexts/ContactModalContext";
 import { useSettings } from "../contexts/SettingsContext";
+import AppLink from "./AppLink";
 
 export default function Hero() {
   const { openContactModal } = useContactModal();
@@ -54,10 +55,10 @@ export default function Hero() {
     }
 
     return (
-      <a href={href} className={className}>
+      <AppLink href={href} className={className}>
         {label}
         {showArrow && <ArrowRight className="h-4 w-4" />}
-      </a>
+      </AppLink>
     );
   }
 

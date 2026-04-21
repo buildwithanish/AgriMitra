@@ -15,7 +15,11 @@ function userPayload(user) {
     role: user.role,
     language: user.language,
     subscriptionPlan: user.subscriptionPlan,
-    farmCount: user.farmCount
+    farmCount: user.farmCount,
+    plan: user.subscriptionPlan,
+    farms: user.farmCount,
+    isBlocked: Boolean(user.isBlocked),
+    status: user.isBlocked ? "blocked" : "active"
   };
 }
 
@@ -62,6 +66,11 @@ export const login = asyncHandler(async (req, res) => {
     throw new Error("Invalid credentials");
   }
 
+  if (user.isBlocked) {
+    res.status(403);
+    throw new Error("Your account is blocked. Please contact the administrator");
+  }
+
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     res.status(401);
@@ -83,3 +92,5 @@ export const me = asyncHandler(async (req, res) => {
     user: userPayload(req.user)
   });
 });
+
+export { userPayload };

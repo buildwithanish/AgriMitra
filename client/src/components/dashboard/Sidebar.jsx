@@ -25,7 +25,7 @@ const farmerItems = [
   { label: "AI Lab", icon: Sparkles, href: "#farmer-ai-lab" },
   { label: "22 Features", icon: DatabaseZap, href: "#farmer-features" },
   { label: "Crop Plan", icon: Wheat, href: "#farmer-crops" },
-  { label: "Weather", icon: CloudRainWind, href: "#farmer-weather" },
+  { label: "Weather", icon: CloudRainWind, href: "#farmer-market" },
   { label: "Market", icon: TrendingUp, href: "#farmer-market" },
   { label: "Alerts", icon: BellRing, href: "#farmer-alerts" },
   { label: "Billing", icon: WalletCards, href: "#farmer-billing" }

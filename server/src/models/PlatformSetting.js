@@ -13,6 +13,14 @@ const platformSettingSchema = new mongoose.Schema(
       text: { type: String, default: "New subsidy scheme available - Apply now" },
       link: { type: String, default: "/#contact" }
     },
+    announcements: [
+      {
+        id: { type: String, default: "announcement-default" },
+        enabled: { type: Boolean, default: true },
+        text: { type: String, default: "New subsidy scheme available - Apply now" },
+        link: { type: String, default: "/#contact" }
+      }
+    ],
     contact: {
       phone: { type: String, default: "+91 9509868673" },
       whatsappNumber: { type: String, default: "919509868673" },
@@ -30,6 +38,10 @@ const platformSettingSchema = new mongoose.Schema(
         type: String,
         default: "Built for modern farm intelligence across advice, monitoring, and automation"
       },
+      featuresDescription: {
+        type: String,
+        default: "A refined product surface that turns advanced agriculture capabilities into clear, usable workflows."
+      },
       footerDescription: {
         type: String,
         default:
@@ -42,6 +54,13 @@ const platformSettingSchema = new mongoose.Schema(
       satelliteProviderKey: { type: String, default: "" },
       whatsappToken: { type: String, default: "" },
       firebaseServerKey: { type: String, default: "" }
+    },
+    apiKeyToggles: {
+      openAiKey: { type: Boolean, default: true },
+      weatherApiKey: { type: Boolean, default: true },
+      satelliteProviderKey: { type: Boolean, default: true },
+      whatsappToken: { type: Boolean, default: true },
+      firebaseServerKey: { type: Boolean, default: true }
     }
   },
   {

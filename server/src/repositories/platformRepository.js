@@ -24,6 +24,14 @@ export const defaultPlatformSettings = {
     text: "New subsidy scheme available - Apply now",
     link: "/#contact"
   },
+  announcements: [
+    {
+      id: "announcement-default",
+      enabled: true,
+      text: "New subsidy scheme available - Apply now",
+      link: "/#contact"
+    }
+  ],
   contact: {
     phone: "+91 9509868673",
     whatsappNumber: "919509868673",
@@ -37,6 +45,8 @@ export const defaultPlatformSettings = {
       "Crop intelligence, sensors, satellite signals, and market timing in one command layer.",
     featuresHeadline:
       "Built for modern farm intelligence across advice, monitoring, and automation",
+    featuresDescription:
+      "A refined product surface that turns advanced agriculture capabilities into clear, usable workflows.",
     footerDescription:
       "A premium agriculture SaaS platform bringing together AI advisory, sensor intelligence, satellite monitoring, and operator-ready analytics."
   },
@@ -46,6 +56,13 @@ export const defaultPlatformSettings = {
     satelliteProviderKey: "",
     whatsappToken: "",
     firebaseServerKey: ""
+  },
+  apiKeyToggles: {
+    openAiKey: true,
+    weatherApiKey: true,
+    satelliteProviderKey: true,
+    whatsappToken: true,
+    firebaseServerKey: true
   }
 };
 
@@ -83,7 +100,8 @@ function withAliases(user) {
   return {
     ...user,
     plan: user.subscriptionPlan,
-    farms: user.farmCount
+    farms: user.farmCount,
+    status: user.isBlocked ? "blocked" : "active"
   };
 }
 
@@ -169,6 +187,7 @@ export async function createUser(payload, options = {}) {
       subscriptionPlan: "starter",
       farmCount: 1,
       role: "farmer",
+      isBlocked: false,
       ...payload,
       email: String(payload.email).toLowerCase()
     });
@@ -216,10 +235,18 @@ export async function listUsers() {
 export async function updateUser(userId, payload) {
   const allowed = {};
 
-  for (const key of ["name", "role", "subscriptionPlan", "farmCount", "language"]) {
+  for (const key of ["name", "role", "subscriptionPlan", "farmCount", "language", "isBlocked"]) {
     if (payload[key] !== undefined) {
       allowed[key] = payload[key];
     }
+  }
+
+  if (allowed.isBlocked === true) {
+    allowed.blockedAt = new Date();
+  }
+
+  if (allowed.isBlocked === false) {
+    allowed.blockedAt = null;
   }
 
   allowed.updatedAt = new Date();
@@ -425,6 +452,28 @@ export async function getPlatformSettings() {
       mockStore.platformSettings = createTimestampedRecord("settings", defaultPlatformSettings);
     }
 
+    if (!mockStore.platformSettings.announcements?.length) {
+      mockStore.platformSettings.announcements = [
+        {
+          id: "announcement-default",
+          enabled: true,
+          text: mockStore.platformSettings.announcement?.text || defaultPlatformSettings.announcement.text,
+          link: mockStore.platformSettings.announcement?.link || defaultPlatformSettings.announcement.link
+        }
+      ];
+    }
+
+    if (!mockStore.platformSettings.apiKeyToggles) {
+      mockStore.platformSettings.apiKeyToggles = { ...defaultPlatformSettings.apiKeyToggles };
+    }
+
+    if (!mockStore.platformSettings.content?.featuresDescription) {
+      mockStore.platformSettings.content = {
+        ...mockStore.platformSettings.content,
+        featuresDescription: defaultPlatformSettings.content.featuresDescription
+      };
+    }
+
     return toPlain(mockStore.platformSettings);
   }
 
@@ -433,13 +482,65 @@ export async function getPlatformSettings() {
     { $setOnInsert: defaultPlatformSettings },
     { new: true, upsert: true }
   ).lean();
+  const normalized = toPlain(settings);
 
-  return toPlain(settings);
+  if (!normalized.announcements?.length) {
+    normalized.announcements = [
+      {
+        id: "announcement-default",
+        enabled: true,
+        text: normalized.announcement?.text || defaultPlatformSettings.announcement.text,
+        link: normalized.announcement?.link || defaultPlatformSettings.announcement.link
+      }
+    ];
+  }
+
+  if (!normalized.apiKeyToggles) {
+    normalized.apiKeyToggles = { ...defaultPlatformSettings.apiKeyToggles };
+  }
+
+  if (!normalized.content?.featuresDescription) {
+    normalized.content = {
+      ...normalized.content,
+      featuresDescription: defaultPlatformSettings.content.featuresDescription
+    };
+  }
+
+  return normalized;
 }
 
 export async function updatePlatformSettings(payload) {
   const current = await getPlatformSettings();
   const merged = mergeDeep(current, payload);
+  const announcements = Array.isArray(merged.announcements) && merged.announcements.length
+    ? merged.announcements
+    : [
+        {
+          id: "announcement-default",
+          enabled: Boolean(merged.announcement?.enabled),
+          text: merged.announcement?.text || defaultPlatformSettings.announcement.text,
+          link: merged.announcement?.link || defaultPlatformSettings.announcement.link
+        }
+      ];
+
+  const activeAnnouncement =
+    announcements.find((item) => item.enabled && item.text) || announcements[0] || defaultPlatformSettings.announcement;
+
+  merged.announcements = announcements.map((item, index) => ({
+    id: item.id || `announcement-${index + 1}`,
+    enabled: item.enabled !== false,
+    text: item.text || "",
+    link: item.link || "/#contact"
+  }));
+  merged.announcement = {
+    enabled: activeAnnouncement?.enabled !== false,
+    text: activeAnnouncement?.text || defaultPlatformSettings.announcement.text,
+    link: activeAnnouncement?.link || defaultPlatformSettings.announcement.link
+  };
+  merged.apiKeyToggles = {
+    ...defaultPlatformSettings.apiKeyToggles,
+    ...(merged.apiKeyToggles || {})
+  };
   merged.key = "main";
   merged.updatedAt = new Date();
 

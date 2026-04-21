@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
-import { BellRing, CheckCircle2, KeyRound, LoaderCircle, PhoneCall, Save, Type } from "lucide-react";
+import { BellRing, CheckCircle2, KeyRound, LoaderCircle, PhoneCall, Plus, Save, Trash2, Type } from "lucide-react";
 import { api } from "../../services/api";
 import { useSettings } from "../../contexts/SettingsContext";
 import GlassPanel from "../GlassPanel";
 
 const emptySettings = {
   announcement: { enabled: true, text: "", link: "" },
+  announcements: [
+    { id: "announcement-default", enabled: true, text: "", link: "/#contact" }
+  ],
   contact: {
     phone: "+91 9509868673",
     whatsappNumber: "919509868673",
@@ -17,6 +20,7 @@ const emptySettings = {
     heroTitle: "",
     heroSubtitle: "",
     featuresHeadline: "",
+    featuresDescription: "",
     footerDescription: ""
   },
   aiKeys: {
@@ -25,6 +29,13 @@ const emptySettings = {
     satelliteProviderKey: "",
     whatsappToken: "",
     firebaseServerKey: ""
+  },
+  apiKeyToggles: {
+    openAiKey: true,
+    weatherApiKey: true,
+    satelliteProviderKey: true,
+    whatsappToken: true,
+    firebaseServerKey: true
   },
   aiKeyStatus: {}
 };
@@ -36,6 +47,15 @@ function updateNested(setState, group, field, value) {
       ...(current[group] || {}),
       [field]: value
     }
+  }));
+}
+
+function updateAnnouncement(setState, index, field, value) {
+  setState((current) => ({
+    ...current,
+    announcements: (current.announcements || []).map((item, itemIndex) =>
+      itemIndex === index ? { ...item, [field]: value } : item
+    )
   }));
 }
 
@@ -62,6 +82,26 @@ export default function AdminSettingsPanel() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  function addAnnouncement() {
+    setSettingsForm((current) => ({
+      ...current,
+      announcements: [
+        ...(current.announcements || []),
+        { id: `announcement-${Date.now()}`, enabled: false, text: "", link: "/#contact" }
+      ]
+    }));
+  }
+
+  function removeAnnouncement(index) {
+    setSettingsForm((current) => ({
+      ...current,
+      announcements:
+        (current.announcements || []).filter((_, itemIndex) => itemIndex !== index).length > 0
+          ? (current.announcements || []).filter((_, itemIndex) => itemIndex !== index)
+          : [{ id: "announcement-default", enabled: false, text: "", link: "/#contact" }]
+    }));
+  }
+
   useEffect(() => {
     async function loadAdminSettings() {
       try {
@@ -69,7 +109,9 @@ export default function AdminSettingsPanel() {
         setSettingsForm((current) => ({
           ...current,
           ...(response.data || {}),
-          aiKeys: emptySettings.aiKeys
+          aiKeys: emptySettings.aiKeys,
+          announcements:
+            response.data?.announcements?.length ? response.data.announcements : current.announcements
         }));
       } catch (requestError) {
         setError(requestError.message);
@@ -88,20 +130,40 @@ export default function AdminSettingsPanel() {
     setError("");
 
     try {
+      const normalizedAnnouncements = (settingsForm.announcements || []).map((item, index) => ({
+        id: item.id || `announcement-${index + 1}`,
+        enabled: Boolean(item.enabled),
+        text: String(item.text || "").trim(),
+        link: String(item.link || "/#contact").trim() || "/#contact"
+      }));
+
+      if (normalizedAnnouncements.length > 0) {
+        normalizedAnnouncements[0] = {
+          ...normalizedAnnouncements[0],
+          enabled: Boolean(settingsForm.announcement.enabled),
+          text: String(settingsForm.announcement.text || "").trim(),
+          link: String(settingsForm.announcement.link || "/#contact").trim() || "/#contact"
+        };
+      }
+
       const payload = {
         announcement: settingsForm.announcement,
+        announcements: normalizedAnnouncements,
         contact: settingsForm.contact,
         content: settingsForm.content,
+        apiKeyToggles: settingsForm.apiKeyToggles,
         aiKeys: Object.fromEntries(
           Object.entries(settingsForm.aiKeys || {}).filter(([, value]) => String(value || "").trim())
         )
       };
-      const response = await api.put("/settings/admin", payload);
+      const response = await api.post("/settings/admin", payload);
       setSettings((current) => ({
         ...current,
         announcement: response.data.announcement,
+        announcements: response.data.announcements,
         contact: response.data.contact,
-        content: response.data.content
+        content: response.data.content,
+        apiKeyToggles: response.data.apiKeyToggles
       }));
       setSettingsForm((current) => ({
         ...current,
@@ -182,6 +244,58 @@ export default function AdminSettingsPanel() {
                 onChange={(value) => updateNested(setSettingsForm, "announcement", "link", value)}
                 placeholder="/#contact"
               />
+              <div className="rounded-2xl border border-slate-200/70 bg-white/80 p-4 dark:border-white/10 dark:bg-white/5">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Announcement list</p>
+                  <button
+                    type="button"
+                    onClick={addAnnouncement}
+                    className="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-3 py-2 text-xs font-semibold text-white"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    Add announcement
+                  </button>
+                </div>
+                <div className="mt-4 space-y-3">
+                  {(settingsForm.announcements || []).map((item, index) => (
+                    <div key={item.id || index} className="rounded-2xl border border-slate-200/70 p-3 dark:border-white/10">
+                      <div className="flex items-center justify-between gap-3">
+                        <label className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
+                          <input
+                            type="checkbox"
+                            checked={Boolean(item.enabled)}
+                            onChange={(event) => updateAnnouncement(setSettingsForm, index, "enabled", event.target.checked)}
+                            className="h-4 w-4 accent-primary-600"
+                          />
+                          Enabled
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => removeAnnouncement(index)}
+                          className="inline-flex items-center gap-1 rounded-xl border border-red-200 px-2.5 py-1.5 text-xs font-semibold text-red-600 dark:border-red-500/20 dark:text-red-300"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                          Delete
+                        </button>
+                      </div>
+                      <div className="mt-3 grid gap-3">
+                        <Field
+                          label={`Announcement ${index + 1} text`}
+                          value={item.text}
+                          onChange={(value) => updateAnnouncement(setSettingsForm, index, "text", value)}
+                          placeholder="New subsidy scheme available - Apply now"
+                        />
+                        <Field
+                          label="Announcement link"
+                          value={item.link}
+                          onChange={(value) => updateAnnouncement(setSettingsForm, index, "link", value)}
+                          placeholder="/#contact"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </section>
 
@@ -211,6 +325,15 @@ export default function AdminSettingsPanel() {
               <Field label="Hero subtitle" value={settingsForm.content.heroSubtitle} onChange={(value) => updateNested(setSettingsForm, "content", "heroSubtitle", value)} />
               <Field label="Features headline" value={settingsForm.content.featuresHeadline} onChange={(value) => updateNested(setSettingsForm, "content", "featuresHeadline", value)} />
               <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+                Features description
+                <textarea
+                  value={settingsForm.content.featuresDescription || ""}
+                  onChange={(event) => updateNested(setSettingsForm, "content", "featuresDescription", event.target.value)}
+                  rows={3}
+                  className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 outline-none transition focus:border-primary-500 dark:border-white/10 dark:bg-white/5"
+                />
+              </label>
+              <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
                 Footer description
                 <textarea
                   value={settingsForm.content.footerDescription || ""}
@@ -232,13 +355,30 @@ export default function AdminSettingsPanel() {
             </p>
             <div className="mt-5 grid gap-4">
               {Object.keys(emptySettings.aiKeys).map((key) => (
-                <Field
-                  key={key}
-                  label={`${key} ${settingsForm.aiKeyStatus?.[key] ? "(configured)" : "(not set)"}`}
-                  value={settingsForm.aiKeys[key]}
-                  onChange={(value) => updateNested(setSettingsForm, "aiKeys", key, value)}
-                  type="password"
-                />
+                <div key={key} className="rounded-2xl border border-slate-200/70 p-4 dark:border-white/10">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+                      {key} {settingsForm.aiKeyStatus?.[key] ? "(configured)" : "(not set)"}
+                    </p>
+                    <label className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
+                      <input
+                        type="checkbox"
+                        checked={Boolean(settingsForm.apiKeyToggles?.[key])}
+                        onChange={(event) => updateNested(setSettingsForm, "apiKeyToggles", key, event.target.checked)}
+                        className="h-4 w-4 accent-primary-600"
+                      />
+                      Enabled
+                    </label>
+                  </div>
+                  <div className="mt-3">
+                    <Field
+                      label="Key value"
+                      value={settingsForm.aiKeys[key]}
+                      onChange={(value) => updateNested(setSettingsForm, "aiKeys", key, value)}
+                      type="password"
+                    />
+                  </div>
+                </div>
               ))}
             </div>
           </section>

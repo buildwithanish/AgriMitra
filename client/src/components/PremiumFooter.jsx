@@ -10,6 +10,7 @@ import {
 } from "../data/marketing";
 import { useContactModal } from "../contexts/ContactModalContext";
 import { useSettings } from "../contexts/SettingsContext";
+import AppLink from "./AppLink";
 
 function FooterHeading({ children }) {
   return (
@@ -163,14 +164,14 @@ export default function PremiumFooter() {
                       <ArrowRight className="h-3.5 w-3.5 opacity-0 transition group-hover:opacity-100" />
                     </button>
                   ) : (
-                    <a
+                    <AppLink
                       key={item.label}
                       href={item.href}
                       className="group inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition hover:translate-x-1 hover:text-primary-700 dark:text-slate-300 dark:hover:text-primary-200"
                     >
                       <span>{item.label}</span>
                       <ArrowRight className="h-3.5 w-3.5 opacity-0 transition group-hover:opacity-100" />
-                    </a>
+                    </AppLink>
                   )
                 ))}
               </nav>
@@ -180,14 +181,14 @@ export default function PremiumFooter() {
               <FooterHeading>Features</FooterHeading>
               <nav className="flex flex-col gap-3">
                 {footerFeatureLinks.map((item) => (
-                  <a
+                  <AppLink
                     key={item.label}
                     href={item.href}
                     className="group inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition hover:translate-x-1 hover:text-primary-700 dark:text-slate-300 dark:hover:text-primary-200"
                   >
                     <span>{item.label}</span>
                     <ArrowRight className="h-3.5 w-3.5 opacity-0 transition group-hover:opacity-100" />
-                  </a>
+                  </AppLink>
                 ))}
               </nav>
             </div>
@@ -247,13 +248,13 @@ export default function PremiumFooter() {
               <div className="flex flex-col gap-3 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
                 <p className="text-sm text-slate-500 dark:text-slate-400">{"\u00A9"} 2026 AI Village Brain</p>
                 <div className="flex items-center justify-center gap-4 text-sm font-medium text-slate-500 dark:text-slate-400 sm:justify-end">
-                  <a href="/privacy-policy" className="transition hover:text-primary-700 dark:hover:text-primary-200">
+                  <AppLink href="/privacy-policy" className="transition hover:text-primary-700 dark:hover:text-primary-200">
                     Privacy Policy
-                  </a>
+                  </AppLink>
                   <span className="h-1 w-1 rounded-full bg-slate-300 dark:bg-white/20" />
-                  <a href="/terms-of-service" className="transition hover:text-primary-700 dark:hover:text-primary-200">
+                  <AppLink href="/terms-of-service" className="transition hover:text-primary-700 dark:hover:text-primary-200">
                     Terms & Conditions
-                  </a>
+                  </AppLink>
                 </div>
               </div>
             </div>

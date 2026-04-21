@@ -18,8 +18,16 @@ const defaultSettings = {
     heroTitle: "Smart AI Farming Starts Here",
     heroSubtitle: "Crop intelligence, sensors, satellite signals, and market timing in one command layer.",
     featuresHeadline: "Built for modern farm intelligence across advice, monitoring, and automation",
+    featuresDescription: "A refined product surface that turns advanced agriculture capabilities into clear, usable workflows.",
     footerDescription:
       "A premium agriculture SaaS platform bringing together AI advisory, sensor intelligence, satellite monitoring, and operator-ready analytics."
+  },
+  apiKeyToggles: {
+    openAiKey: true,
+    weatherApiKey: true,
+    satelliteProviderKey: true,
+    whatsappToken: true,
+    firebaseServerKey: true
   }
 };
 
