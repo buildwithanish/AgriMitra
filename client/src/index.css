@@ -1,0 +1,62 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    background: #f4fbf7;
+  }
+
+  :root.dark {
+    color-scheme: dark;
+    background: #07170f;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-[#f4fbf7] font-sans text-slate-900 antialiased transition-colors duration-500 dark:bg-primary-950 dark:text-white;
+    background-image:
+      radial-gradient(circle at top left, rgba(92, 193, 130, 0.08), transparent 30%),
+      radial-gradient(circle at bottom right, rgba(243, 179, 0, 0.08), transparent 26%);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(52, 158, 97, 0.45) transparent;
+  }
+
+  ::selection {
+    background: rgba(52, 158, 97, 0.28);
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply border border-white/45 bg-white/70 shadow-panel backdrop-blur-2xl dark:border-white/10 dark:bg-white/5;
+  }
+
+  .hero-orb {
+    @apply absolute rounded-full blur-3xl;
+  }
+
+  .section-shell {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary-400 via-primary-600 to-accent-500 bg-clip-text text-transparent;
+  }
+
+  .soft-grid {
+    background-image:
+      linear-gradient(to right, rgba(6, 78, 59, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(6, 78, 59, 0.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+}

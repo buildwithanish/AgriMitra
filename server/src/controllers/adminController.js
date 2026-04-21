@@ -1,0 +1,56 @@
+import {
+  countPredictions,
+  countSensors,
+  countUsers,
+  listUsers as listPlatformUsers
+} from "../repositories/platformRepository.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+
+export const listUsers = asyncHandler(async (req, res) => {
+  const users = await listPlatformUsers();
+  res.json({ success: true, data: { users } });
+});
+
+export const analytics = asyncHandler(async (req, res) => {
+  const [predictionCount, sensorCount, userCount] = await Promise.all([
+    countPredictions(),
+    countSensors(),
+    countUsers()
+  ]);
+
+  res.json({
+    success: true,
+    data: {
+      predictionCount,
+      sensorCount,
+      userCount,
+      predictionMix: [
+        { name: "Crop", value: 31 },
+        { name: "Yield", value: 22 },
+        { name: "Pest", value: 18 },
+        { name: "Market", value: 17 },
+        { name: "Insurance", value: 12 }
+      ],
+      revenueTrend: [
+        { month: "Jan", revenue: 68 },
+        { month: "Feb", revenue: 74 },
+        { month: "Mar", revenue: 86 },
+        { month: "Apr", revenue: 94 },
+        { month: "May", revenue: 108 }
+      ],
+      userGrowth: [
+        { month: "Jan", users: 420 },
+        { month: "Feb", users: 580 },
+        { month: "Mar", users: 770 },
+        { month: "Apr", users: 930 },
+        { month: "May", users: userCount || 1284 }
+      ],
+      sensorHealth: [
+        { zone: "North cluster", active: 92 },
+        { zone: "East cluster", active: 81 },
+        { zone: "Canal belt", active: 88 },
+        { zone: "Highland belt", active: 75 }
+      ]
+    }
+  });
+});
