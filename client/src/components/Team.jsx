@@ -13,7 +13,7 @@ export default function Team() {
         align="center"
       />
 
-      <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+      <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-5">
         {teamMembers.map((member, index) => (
           <motion.article
             key={member.name}
@@ -27,6 +27,7 @@ export default function Team() {
               <img
                 src={member.image}
                 alt={member.name}
+                style={{ objectPosition: member.imagePosition || "center" }}
                 className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
               />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent p-5">
@@ -55,6 +56,11 @@ export default function Team() {
                 <div>
                   <h3 className="font-display text-xl font-bold text-slate-950 dark:text-white">{member.name}</h3>
                   <p className="mt-2 text-sm text-primary-700 dark:text-primary-300">{member.role}</p>
+                  {member.featured && (
+                    <p className="mt-3 inline-flex rounded-full bg-primary-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-primary-700 dark:text-primary-300">
+                      Founder
+                    </p>
+                  )}
                 </div>
                 <button
                   type="button"

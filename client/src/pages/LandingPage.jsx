@@ -4,8 +4,10 @@ import AboutSection from "../components/AboutSection";
 import ServicesSection from "../components/ServicesSection";
 import Features from "../components/Features";
 import DashboardPreview from "../components/DashboardPreview";
+import ProjectsSection from "../components/ProjectsSection";
 import Team from "../components/Team";
 import TestimonialsSection from "../components/TestimonialsSection";
+import BlogSection from "../components/BlogSection";
 import NewsletterSection from "../components/NewsletterSection";
 
 export default function LandingPage() {
@@ -21,8 +23,10 @@ export default function LandingPage() {
       <ServicesSection />
       <Features />
       <DashboardPreview />
+      <ProjectsSection />
       <Team />
       <TestimonialsSection />
+      <BlogSection />
       <NewsletterSection />
     </motion.div>
   );

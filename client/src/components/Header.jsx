@@ -13,9 +13,22 @@ import {
   X
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
+import { useContactModal } from "../contexts/ContactModalContext";
 import { headerNavigation, topBarInfo } from "../data/marketing";
 
-function DesktopLink({ item }) {
+function DesktopLink({ item, onContactClick }) {
+  if (item.action === "contact-modal") {
+    return (
+      <button
+        type="button"
+        onClick={onContactClick}
+        className="inline-flex items-center text-sm font-semibold text-slate-700 transition hover:text-primary-700 dark:text-slate-200 dark:hover:text-primary-300"
+      >
+        {item.label}
+      </button>
+    );
+  }
+
   return (
     <a
       href={item.href}
@@ -26,36 +39,54 @@ function DesktopLink({ item }) {
   );
 }
 
-function MegaMenu({ item, onClose }) {
+function MegaMenu({ item, onClose, onContactClick }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 8 }}
       transition={{ duration: 0.2 }}
-      className="absolute left-1/2 top-full z-50 mt-5 w-[min(92vw,900px)] -translate-x-1/2 rounded-[30px] border border-white/70 bg-white/92 p-6 shadow-[0_30px_80px_rgba(7,23,15,0.14)] backdrop-blur-2xl dark:border-white/10 dark:bg-primary-950/92"
+      className="absolute left-1/2 top-full z-50 mt-5 w-[min(92vw,900px)] -translate-x-1/2 rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_35px_110px_rgba(2,6,23,0.24)] dark:border-slate-800 dark:bg-slate-950"
     >
       <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="grid gap-4 sm:grid-cols-2">
           {item.sections.map((section) => (
-            <div key={section.title} className="rounded-[24px] border border-slate-200/70 bg-white/70 p-5 dark:border-white/10 dark:bg-white/5">
+            <div key={section.title} className="rounded-[24px] border border-slate-200 bg-slate-50 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary-700 dark:text-primary-300">
                 {section.title}
               </p>
               <div className="mt-4 space-y-3">
                 {section.items.map((entry) => (
-                  <a
-                    key={entry.label}
-                    href={entry.href}
-                    onClick={onClose}
-                    className="group block rounded-2xl px-3 py-3 transition hover:bg-primary-500/8"
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="font-semibold text-slate-900 dark:text-white">{entry.label}</p>
-                      <ArrowRight className="h-4 w-4 text-primary-600 opacity-0 transition group-hover:opacity-100" />
-                    </div>
-                    <p className="mt-1 text-sm leading-6 text-slate-500 dark:text-slate-400">{entry.description}</p>
-                  </a>
+                  entry.action === "contact-modal" ? (
+                    <button
+                      key={entry.label}
+                      type="button"
+                      onClick={() => {
+                        onClose();
+                        onContactClick();
+                      }}
+                      className="group block w-full rounded-2xl px-3 py-3 text-left transition hover:bg-primary-500/8"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="font-semibold text-slate-900 dark:text-white">{entry.label}</p>
+                        <ArrowRight className="h-4 w-4 text-primary-600 opacity-0 transition group-hover:opacity-100" />
+                      </div>
+                      <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">{entry.description}</p>
+                    </button>
+                  ) : (
+                    <a
+                      key={entry.label}
+                      href={entry.href}
+                      onClick={onClose}
+                      className="group block rounded-2xl px-3 py-3 transition hover:bg-primary-500/8"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="font-semibold text-slate-900 dark:text-white">{entry.label}</p>
+                        <ArrowRight className="h-4 w-4 text-primary-600 opacity-0 transition group-hover:opacity-100" />
+                      </div>
+                      <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">{entry.description}</p>
+                    </a>
+                  )
                 ))}
               </div>
             </div>
@@ -94,67 +125,145 @@ function MegaMenu({ item, onClose }) {
   );
 }
 
-function DropdownMenu({ item, onClose }) {
+function DropdownMenu({ item, onClose, onContactClick }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 8 }}
       transition={{ duration: 0.2 }}
-      className="absolute left-1/2 top-full z-50 mt-5 w-[min(92vw,560px)] -translate-x-1/2 rounded-[28px] border border-white/70 bg-white/92 p-5 shadow-[0_30px_80px_rgba(7,23,15,0.14)] backdrop-blur-2xl dark:border-white/10 dark:bg-primary-950/92"
+      className="absolute right-0 top-full z-50 mt-5 w-[min(92vw,760px)] rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_35px_110px_rgba(2,6,23,0.24)] dark:border-slate-800 dark:bg-slate-950"
     >
-      <div className="grid gap-4 md:grid-cols-2">
-        {item.groups.map((group) => (
-          <div key={group.title} className="rounded-[22px] border border-slate-200/70 bg-white/70 p-4 dark:border-white/10 dark:bg-white/5">
+      <div className={`grid gap-4 ${item.spotlight ? "md:grid-cols-[0.9fr_1.1fr]" : "md:grid-cols-2"}`}>
+        <div className={`grid gap-4 ${item.groups.length > 1 ? "md:grid-cols-2" : ""}`}>
+          {item.groups.map((group) => (
+          <div key={group.title} className="rounded-[22px] border border-slate-200 bg-slate-50 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary-700 dark:text-primary-300">
               {group.title}
             </p>
             <div className="mt-4 space-y-3">
               {group.items.map((entry) =>
                 entry.children ? (
-                  <div key={entry.label} className="rounded-2xl bg-slate-50/80 p-3 dark:bg-white/4">
+                  <div key={entry.label} className="rounded-2xl bg-white p-3 shadow-sm dark:bg-slate-950">
                     <div className="flex items-center justify-between gap-3">
                       <p className="font-semibold text-slate-900 dark:text-white">{entry.label}</p>
                       <ChevronRight className="h-4 w-4 text-primary-600 dark:text-primary-300" />
                     </div>
                     <div className="mt-3 space-y-2 pl-1">
                       {entry.children.map((child) => (
-                        <a
-                          key={child.label}
-                          href={child.href}
-                          onClick={onClose}
-                          className="group flex items-center justify-between rounded-xl px-2 py-2 text-sm text-slate-600 transition hover:bg-primary-500/8 hover:text-primary-700 dark:text-slate-300 dark:hover:text-primary-200"
-                        >
-                          <span>{child.label}</span>
-                          <ArrowRight className="h-3.5 w-3.5 opacity-0 transition group-hover:opacity-100" />
-                        </a>
+                        child.action === "contact-modal" ? (
+                          <button
+                            key={child.label}
+                            type="button"
+                            onClick={() => {
+                              onClose();
+                              onContactClick();
+                            }}
+                            className="group flex w-full items-center justify-between rounded-xl px-2 py-2 text-sm text-slate-700 transition hover:bg-primary-500/8 hover:text-primary-700 dark:text-slate-300 dark:hover:text-primary-200"
+                          >
+                            <span>{child.label}</span>
+                            <ArrowRight className="h-3.5 w-3.5 opacity-0 transition group-hover:opacity-100" />
+                          </button>
+                        ) : (
+                          <a
+                            key={child.label}
+                            href={child.href}
+                            onClick={onClose}
+                            className="group flex items-center justify-between rounded-xl px-2 py-2 text-sm text-slate-700 transition hover:bg-primary-500/8 hover:text-primary-700 dark:text-slate-300 dark:hover:text-primary-200"
+                          >
+                            <span>{child.label}</span>
+                            <ArrowRight className="h-3.5 w-3.5 opacity-0 transition group-hover:opacity-100" />
+                          </a>
+                        )
                       ))}
                     </div>
                   </div>
                 ) : (
-                  <a
-                    key={entry.label}
-                    href={entry.href}
-                    onClick={onClose}
-                    className="group flex items-center justify-between rounded-2xl px-3 py-3 text-sm font-semibold text-slate-700 transition hover:bg-primary-500/8 hover:text-primary-700 dark:text-slate-200 dark:hover:text-primary-200"
-                  >
-                    <span>{entry.label}</span>
-                    <ArrowRight className="h-4 w-4 opacity-0 transition group-hover:opacity-100" />
-                  </a>
+                  entry.action === "contact-modal" ? (
+                    <button
+                      key={entry.label}
+                      type="button"
+                      onClick={() => {
+                        onClose();
+                        onContactClick();
+                      }}
+                      className="group flex w-full items-center justify-between rounded-2xl px-3 py-3 text-sm font-semibold text-slate-800 transition hover:bg-primary-500/8 hover:text-primary-700 dark:text-slate-200 dark:hover:text-primary-200"
+                    >
+                      <span>{entry.label}</span>
+                      <ArrowRight className="h-4 w-4 opacity-0 transition group-hover:opacity-100" />
+                    </button>
+                  ) : (
+                    <a
+                      key={entry.label}
+                      href={entry.href}
+                      onClick={onClose}
+                      className="group flex items-center justify-between rounded-2xl px-3 py-3 text-sm font-semibold text-slate-800 transition hover:bg-primary-500/8 hover:text-primary-700 dark:text-slate-200 dark:hover:text-primary-200"
+                    >
+                      <span>{entry.label}</span>
+                      <ArrowRight className="h-4 w-4 opacity-0 transition group-hover:opacity-100" />
+                    </a>
+                  )
                 )
               )}
             </div>
           </div>
-        ))}
+          ))}
+        </div>
+
+        {item.spotlight && (
+          <div className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-primary-700 via-primary-800 to-primary-950 p-5 text-white">
+            <div className="absolute -right-12 top-0 h-32 w-32 rounded-full bg-white/10 blur-3xl" />
+            <div className="absolute -left-8 bottom-0 h-32 w-32 rounded-full bg-accent-400/15 blur-3xl" />
+            <div className="relative">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary-100/70">Featured</p>
+              <h3 className="mt-3 font-display text-3xl font-bold leading-tight">{item.spotlight.title}</h3>
+              <p className="mt-4 text-sm leading-7 text-primary-50/80">{item.spotlight.description}</p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {item.spotlight.chips.map((chip) => (
+                  <span
+                    key={chip}
+                    className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-white"
+                  >
+                    {chip}
+                  </span>
+                ))}
+              </div>
+              <a
+                href={item.spotlight.href}
+                onClick={onClose}
+                className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-white px-4 py-3 font-semibold text-primary-900 transition hover:-translate-y-0.5"
+              >
+                Explore
+                <ArrowRight className="h-4 w-4" />
+              </a>
+            </div>
+          </div>
+        )}
       </div>
     </motion.div>
   );
 }
 
-function MobileMenuItem({ item, openItem, setOpenItem, onNavigate }) {
+function MobileMenuItem({ item, openItem, setOpenItem, onNavigate, onContactClick }) {
   const expanded = openItem === item.label;
 
   if (item.type === "link") {
+    if (item.action === "contact-modal") {
+      return (
+        <button
+          type="button"
+          onClick={() => {
+            onNavigate();
+            onContactClick();
+          }}
+          className="flex w-full items-center justify-between rounded-2xl border border-slate-200/80 bg-white/80 px-4 py-4 text-sm font-semibold text-slate-800 dark:border-white/10 dark:bg-white/5 dark:text-white"
+        >
+          <span>{item.label}</span>
+          <ArrowRight className="h-4 w-4 text-primary-600" />
+        </button>
+      );
+    }
+
     return (
       <a
         href={item.href}
@@ -198,26 +307,54 @@ function MobileMenuItem({ item, openItem, setOpenItem, onNavigate }) {
                     <p className="text-sm font-semibold text-slate-900 dark:text-white">{entry.label}</p>
                     <div className="mt-2 space-y-2 pl-2">
                       {entry.children.map((child) => (
-                        <a
-                          key={child.label}
-                          href={child.href}
-                          onClick={onNavigate}
-                          className="block rounded-xl px-2 py-2 text-sm text-slate-600 transition hover:bg-primary-500/8 hover:text-primary-700 dark:text-slate-300 dark:hover:text-primary-200"
-                        >
-                          {child.label}
-                        </a>
+                        child.action === "contact-modal" ? (
+                          <button
+                            key={child.label}
+                            type="button"
+                            onClick={() => {
+                              onNavigate();
+                              onContactClick();
+                            }}
+                            className="block w-full rounded-xl px-2 py-2 text-left text-sm text-slate-600 transition hover:bg-primary-500/8 hover:text-primary-700 dark:text-slate-300 dark:hover:text-primary-200"
+                          >
+                            {child.label}
+                          </button>
+                        ) : (
+                          <a
+                            key={child.label}
+                            href={child.href}
+                            onClick={onNavigate}
+                            className="block rounded-xl px-2 py-2 text-sm text-slate-600 transition hover:bg-primary-500/8 hover:text-primary-700 dark:text-slate-300 dark:hover:text-primary-200"
+                          >
+                            {child.label}
+                          </a>
+                        )
                       ))}
                     </div>
                   </div>
                 ) : (
-                  <a
-                    key={entry.label}
-                    href={entry.href}
-                    onClick={onNavigate}
-                    className="block rounded-2xl px-3 py-3 text-sm font-medium text-slate-600 transition hover:bg-primary-500/8 hover:text-primary-700 dark:text-slate-300 dark:hover:text-primary-200"
-                  >
-                    {entry.label}
-                  </a>
+                  entry.action === "contact-modal" ? (
+                    <button
+                      key={entry.label}
+                      type="button"
+                      onClick={() => {
+                        onNavigate();
+                        onContactClick();
+                      }}
+                      className="block w-full rounded-2xl px-3 py-3 text-left text-sm font-medium text-slate-600 transition hover:bg-primary-500/8 hover:text-primary-700 dark:text-slate-300 dark:hover:text-primary-200"
+                    >
+                      {entry.label}
+                    </button>
+                  ) : (
+                    <a
+                      key={entry.label}
+                      href={entry.href}
+                      onClick={onNavigate}
+                      className="block rounded-2xl px-3 py-3 text-sm font-medium text-slate-600 transition hover:bg-primary-500/8 hover:text-primary-700 dark:text-slate-300 dark:hover:text-primary-200"
+                    >
+                      {entry.label}
+                    </a>
+                  )
                 )
               )}
             </div>
@@ -231,6 +368,7 @@ function MobileMenuItem({ item, openItem, setOpenItem, onNavigate }) {
 export default function Header() {
   const location = useLocation();
   const { user } = useAuth();
+  const { openContactModal } = useContactModal();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState("");
   const [openItem, setOpenItem] = useState("");
@@ -253,13 +391,17 @@ export default function Header() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
-      <div className="hidden border-b border-white/50 bg-white/80 backdrop-blur-xl md:block dark:border-white/10 dark:bg-primary-950/85">
+      <div className="hidden border-b border-slate-200 bg-white/95 md:block dark:border-slate-800 dark:bg-slate-950/95">
         <div className="section-shell flex items-center justify-between gap-4 py-3 text-sm">
           <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
             <span className="font-medium">{topBarInfo.message}</span>
-            <a href="/#contact" className="font-semibold text-primary-700 transition hover:text-primary-600 dark:text-primary-300">
+            <button
+              type="button"
+              onClick={openContactModal}
+              className="font-semibold text-primary-700 transition hover:text-primary-600 dark:text-primary-300"
+            >
               Contact Us
-            </a>
+            </button>
           </div>
           <div className="flex items-center gap-5 text-slate-500 dark:text-slate-400">
             <a href={`mailto:${topBarInfo.email}`} className="inline-flex items-center gap-2 transition hover:text-primary-700 dark:hover:text-primary-300">
@@ -278,8 +420,8 @@ export default function Header() {
         <div
           className={`relative rounded-[30px] border transition duration-300 ${
             scrolled
-              ? "border-white/70 bg-white/88 shadow-[0_24px_70px_rgba(7,23,15,0.12)] backdrop-blur-2xl dark:border-white/10 dark:bg-primary-950/88"
-              : "border-white/50 bg-white/78 backdrop-blur-2xl dark:border-white/10 dark:bg-primary-950/78"
+              ? "border-slate-200 bg-white/98 shadow-[0_24px_70px_rgba(2,6,23,0.16)] backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/96"
+              : "border-slate-200 bg-white/96 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/94"
           }`}
         >
           <div className="flex items-center justify-between gap-4 px-4 py-4 md:px-5 lg:px-6">
@@ -304,7 +446,7 @@ export default function Header() {
                   onMouseLeave={() => item.type !== "link" && setOpenMenu("")}
                 >
                   {item.type === "link" ? (
-                    <DesktopLink item={item} />
+                    <DesktopLink item={item} onContactClick={openContactModal} />
                   ) : (
                     <button
                       type="button"
@@ -318,9 +460,9 @@ export default function Header() {
                   <AnimatePresence>
                     {openMenu === item.label &&
                       (item.type === "mega" ? (
-                        <MegaMenu item={item} onClose={() => setOpenMenu("")} />
+                        <MegaMenu item={item} onClose={() => setOpenMenu("")} onContactClick={openContactModal} />
                       ) : (
-                        <DropdownMenu item={item} onClose={() => setOpenMenu("")} />
+                        <DropdownMenu item={item} onClose={() => setOpenMenu("")} onContactClick={openContactModal} />
                       ))}
                   </AnimatePresence>
                 </div>
@@ -372,6 +514,7 @@ export default function Header() {
                       item={item}
                       openItem={openItem}
                       setOpenItem={setOpenItem}
+                      onContactClick={openContactModal}
                       onNavigate={() => {
                         setMobileOpen(false);
                         setOpenItem("");

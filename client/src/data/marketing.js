@@ -3,10 +3,12 @@ import {
   ArrowUpRight,
   AudioLines,
   BadgeHelp,
+  BookOpenText,
   BellRing,
   BrainCircuit,
   BriefcaseBusiness,
   Bug,
+  CalendarDays,
   ChartColumnIncreasing,
   CloudRainWind,
   Cpu,
@@ -20,7 +22,9 @@ import {
   Linkedin,
   MapPin,
   MessageCircleMore,
+  Newspaper,
   PhoneCall,
+  Rocket,
   Radar,
   ScanSearch,
   ShieldCheck,
@@ -57,7 +61,7 @@ export const headerNavigation = [
         title: "Trust",
         items: [
           { label: "Testimonials", href: "/#testimonials", description: "What operators and partners say" },
-          { label: "Contact", href: "/#contact", description: "Talk to our agriculture specialists" },
+          { label: "Contact", href: "/#contact", description: "Talk to our agriculture specialists", action: "contact-modal" },
           { label: "404 Page", href: "/features", description: "Preview branded utility pages" }
         ]
       }
@@ -87,7 +91,13 @@ export const headerNavigation = [
           }
         ]
       }
-    ]
+    ],
+    spotlight: {
+      title: "Operator services built for real farm workflows",
+      description: "From AI advisory to finance and remote monitoring, every service is packaged like a premium product module.",
+      chips: ["Advisory", "Monitoring", "Automation"],
+      href: "/#services"
+    }
   },
   {
     label: "Projects",
@@ -96,18 +106,24 @@ export const headerNavigation = [
       {
         title: "Project Menu",
         items: [
-          { label: "Project Overview", href: "/#dashboard-preview" },
+          { label: "Project Overview", href: "/#projects" },
           {
             label: "Project Details",
             children: [
-              { label: "Project Left", href: "/#dashboard-preview" },
-              { label: "Project Right", href: "/#dashboard-preview" },
-              { label: "Project Single", href: "/#dashboard-preview" }
+              { label: "Project Left", href: "/#projects" },
+              { label: "Project Right", href: "/#projects" },
+              { label: "Project Single", href: "/#projects" }
             ]
           }
         ]
       }
-    ]
+    ],
+    spotlight: {
+      title: "Deployment stories, rollout snapshots, and village case views",
+      description: "Showcase polished project highlights instead of empty menu space.",
+      chips: ["Case Studies", "Rollouts", "Impact"],
+      href: "/#projects"
+    }
   },
   {
     label: "Blog",
@@ -116,22 +132,29 @@ export const headerNavigation = [
       {
         title: "Blog Menu",
         items: [
-          { label: "Blog Overview", href: "/#newsletter" },
+          { label: "Blog Overview", href: "/#blog" },
           {
             label: "Blog Details",
             children: [
-              { label: "Blog Left", href: "/#newsletter" },
-              { label: "Blog Right", href: "/#newsletter" },
-              { label: "Blog Single", href: "/#newsletter" }
+              { label: "Blog Left", href: "/#blog" },
+              { label: "Blog Right", href: "/#blog" },
+              { label: "Blog Single", href: "/#blog" }
             ]
           }
         ]
       }
-    ]
+    ],
+    spotlight: {
+      title: "Content that explains the product in a clear, startup-ready way",
+      description: "Product notes, advisory articles, and launch-style blog cards for visitors and partners.",
+      chips: ["Insights", "Updates", "Field Notes"],
+      href: "/#blog"
+    }
   },
   {
     label: "Contact",
     href: "/#contact",
+    action: "contact-modal",
     type: "link"
   }
 ];
@@ -197,6 +220,125 @@ export const premiumHeroSlides = [
     metrics: [
       { label: "Income lift identified", value: "\u20B94.2L" },
       { label: "Risk leakage reduced", value: "18%" }
+    ]
+  },
+  {
+    id: "hero-4",
+    image:
+      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80",
+    eyebrow: "Yield control room",
+    title: "Forecast harvest performance with sharper operational visibility",
+    description:
+      "Monitor crop strength, irrigation timing, weather shifts, and market confidence from one premium analytics layer.",
+    primaryCta: "Open Farmer Panel",
+    secondaryCta: "See AI Features",
+    primaryHref: "/login",
+    secondaryHref: "/features",
+    metrics: [
+      { label: "Yield confidence", value: "94%" },
+      { label: "Field alerts", value: "24" }
+    ]
+  },
+  {
+    id: "hero-5",
+    image:
+      "https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=1600&q=80",
+    eyebrow: "Farmer network ops",
+    title: "Run village programs with dashboards that feel enterprise-ready",
+    description:
+      "Coordinate advisory campaigns, sensor fleets, and field teams across clusters without losing simplicity for daily use.",
+    primaryCta: "View Admin Workspace",
+    secondaryCta: "Meet the Team",
+    primaryHref: "/login",
+    secondaryHref: "/#team",
+    metrics: [
+      { label: "Clusters active", value: "36" },
+      { label: "Program uptime", value: "99.2%" }
+    ]
+  },
+  {
+    id: "hero-6",
+    image:
+      "https://images.unsplash.com/photo-1471193945509-9ad0617afabf?auto=format&fit=crop&w=1600&q=80",
+    eyebrow: "Precision nutrition",
+    title: "Reduce input waste with fertilizer optimization that stays actionable",
+    description:
+      "Translate soil and crop signals into nutrient strategies that protect margins and improve consistency across seasons.",
+    primaryCta: "Explore Services",
+    secondaryCta: "Talk to Us",
+    primaryHref: "/#services",
+    secondaryHref: "/#contact",
+    metrics: [
+      { label: "Input savings", value: "11%" },
+      { label: "Soil scans", value: "8.2K" }
+    ]
+  },
+  {
+    id: "hero-7",
+    image:
+      "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1600&q=80",
+    eyebrow: "Satellite intelligence",
+    title: "Detect crop stress earlier with remote monitoring layers",
+    description:
+      "Use simulated satellite health scoring and plot-level pattern recognition to prioritize on-ground action faster.",
+    primaryCta: "View Dashboard Preview",
+    secondaryCta: "Read Testimonials",
+    primaryHref: "/#dashboard-preview",
+    secondaryHref: "/#testimonials",
+    metrics: [
+      { label: "Plots scored", value: "14.5K" },
+      { label: "Stress zones found", value: "312" }
+    ]
+  },
+  {
+    id: "hero-8",
+    image:
+      "https://images.unsplash.com/photo-1523741543316-beb7fc7023d8?auto=format&fit=crop&w=1600&q=80",
+    eyebrow: "Market timing",
+    title: "Spot stronger selling windows before price moves pass you by",
+    description:
+      "Blend mandi trend signals with yield expectations so growers can make better timing decisions with more confidence.",
+    primaryCta: "See Market Signals",
+    secondaryCta: "Subscribe for Updates",
+    primaryHref: "/#dashboard-preview",
+    secondaryHref: "/#newsletter",
+    metrics: [
+      { label: "Price lift tracked", value: "+17%" },
+      { label: "Markets watched", value: "84" }
+    ]
+  },
+  {
+    id: "hero-9",
+    image:
+      "https://images.unsplash.com/photo-1574943320219-553eb213f72d?auto=format&fit=crop&w=1600&q=80",
+    eyebrow: "Voice + WhatsApp AI",
+    title: "Reach farmers through familiar channels, not just dashboards",
+    description:
+      "Deploy multilingual chat, voice support, and alert workflows that make intelligence accessible beyond the screen.",
+    primaryCta: "Open WhatsApp AI",
+    secondaryCta: "Contact Team",
+    primaryHref: "/#whatsapp",
+    secondaryHref: "/#contact",
+    metrics: [
+      { label: "Messages sent", value: "51K" },
+      { label: "Voice sessions", value: "9.8K" }
+    ]
+  },
+  {
+    id: "hero-10",
+    image:
+      "https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?auto=format&fit=crop&w=1600&q=80",
+    eyebrow: "Insurance + resilience",
+    title: "Model risk before it becomes a costly season surprise",
+    description:
+      "Use insurance prediction, digital twin simulation, and alerting to manage uncertainty with a more strategic view.",
+    primaryCta: "Start Growing Now",
+    secondaryCta: "Explore Platform",
+    primaryHref: "/login",
+    secondaryHref: "/features",
+    metrics: [
+      { label: "Risk score checks", value: "12.4K" },
+      { label: "Scenarios simulated", value: "3.1K" }
     ]
   }
 ];
@@ -311,10 +453,75 @@ export const dashboardPreviewCharts = {
   ]
 };
 
+export const projectShowcase = [
+  {
+    title: "Village rollout command center",
+    description: "A multi-cluster pilot where alerts, IoT telemetry, and advisory workflows were unified in one dashboard.",
+    metric: "128 villages",
+    image:
+      "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1200&q=80",
+    icon: Rocket
+  },
+  {
+    title: "Market timing intelligence",
+    description: "A pricing-monitoring deployment designed to help growers choose better selling windows and reduce margin leakage.",
+    metric: "+17% price lift",
+    image:
+      "https://images.unsplash.com/photo-1523741543316-beb7fc7023d8?auto=format&fit=crop&w=1200&q=80",
+    icon: TrendingUp
+  },
+  {
+    title: "Satellite health monitoring",
+    description: "Plot health visualization with remote stress signals layered into daily operational decision-making.",
+    metric: "14.5K plots",
+    image:
+      "https://images.unsplash.com/photo-1471193945509-9ad0617afabf?auto=format&fit=crop&w=1200&q=80",
+    icon: ScanSearch
+  }
+];
+
+export const blogPosts = [
+  {
+    title: "How AI crop planning improves farmer income decisions",
+    excerpt: "A practical breakdown of crop selection, margin signals, and field-level planning in one workflow.",
+    meta: "Product Insight",
+    image:
+      "https://images.unsplash.com/photo-1492496913980-501348b61469?auto=format&fit=crop&w=1200&q=80",
+    icon: BookOpenText
+  },
+  {
+    title: "Why WhatsApp and voice workflows matter in rural operations",
+    excerpt: "Modern interfaces matter, but channel accessibility is what drives adoption on the ground.",
+    meta: "Field Note",
+    image:
+      "https://images.unsplash.com/photo-1516466723877-e4ec1d736c8a?auto=format&fit=crop&w=1200&q=80",
+    icon: Newspaper
+  },
+  {
+    title: "Building a polished agritech dashboard that feels investor-ready",
+    excerpt: "Design patterns, analytics layers, and product storytelling for a premium agriculture SaaS experience.",
+    meta: "Launch Story",
+    image:
+      "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1200&q=80",
+    icon: CalendarDays
+  }
+];
+
 export const teamMembers = [
   {
+    name: "Anish Raj",
+    role: "CEO & Founder",
+    image: "/anish-raj.jpg",
+    imagePosition: "center top",
+    featured: true,
+    socials: [
+      { label: "LinkedIn", href: "https://www.linkedin.com", icon: Linkedin },
+      { label: "Twitter", href: "https://x.com", icon: Twitter }
+    ]
+  },
+  {
     name: "Aarav Menon",
-    role: "Founder & CEO",
+    role: "Chief Strategy Advisor",
     image:
       "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
     socials: [
@@ -386,7 +593,7 @@ export const footerTopLinks = [
   { label: "Home", href: "/" },
   { label: "About", href: "/#about" },
   { label: "Services", href: "/#services" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Contact", href: "/#contact", action: "contact-modal" },
   { label: "Blog", href: "/#newsletter" }
 ];
 

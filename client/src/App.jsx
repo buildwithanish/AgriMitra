@@ -1,9 +1,10 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import Header from "./components/Header";
-import Footer from "./components/Footer";
+import PremiumFooter from "./components/PremiumFooter";
 import ProtectedRoute from "./components/ProtectedRoute";
 import WhatsAppWidget from "./components/WhatsAppWidget";
+import ContactRegistrationModal from "./components/ContactRegistrationModal";
 import LandingPage from "./pages/LandingPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import LoginPage from "./pages/LoginPage";
@@ -34,8 +35,9 @@ function AppLayout() {
           </Routes>
         </AnimatePresence>
       </main>
-      {!isWorkspaceView && <Footer />}
-      <WhatsAppWidget />
+      {!isWorkspaceView && <PremiumFooter />}
+      {!isWorkspaceView && <WhatsAppWidget />}
+      <ContactRegistrationModal />
     </div>
   );
 }

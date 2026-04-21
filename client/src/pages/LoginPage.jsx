@@ -194,6 +194,11 @@ export default function LoginPage() {
               </div>
             )}
 
+            <p className="text-xs leading-6 text-slate-500 dark:text-slate-400">
+              Local mode uses `http://localhost:5000`. Live mode uses the Vercel proxy or the Render backend
+              automatically.
+            </p>
+
             <button
               type="submit"
               disabled={pending}

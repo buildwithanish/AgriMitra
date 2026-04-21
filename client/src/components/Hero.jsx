@@ -2,9 +2,17 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, ChevronLeft, ChevronRight, Sparkles, Waves } from "lucide-react";
 import { premiumHeroSlides } from "../data/marketing";
+import { useContactModal } from "../contexts/ContactModalContext";
 
 export default function Hero() {
+  const { openContactModal } = useContactModal();
   const [activeSlide, setActiveSlide] = useState(0);
+
+  function openWhatsAppDemo() {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("aivb:open-whatsapp"));
+    }
+  }
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -15,6 +23,33 @@ export default function Hero() {
   }, []);
 
   const slide = premiumHeroSlides[activeSlide];
+
+  function renderHeroAction(href, label, className, showArrow = false) {
+    if (href === "/#contact") {
+      return (
+        <button type="button" onClick={openContactModal} className={className}>
+          {label}
+          {showArrow && <ArrowRight className="h-4 w-4" />}
+        </button>
+      );
+    }
+
+    if (href === "/#whatsapp") {
+      return (
+        <button type="button" onClick={openWhatsAppDemo} className={className}>
+          {label}
+          {showArrow && <ArrowRight className="h-4 w-4" />}
+        </button>
+      );
+    }
+
+    return (
+      <a href={href} className={className}>
+        {label}
+        {showArrow && <ArrowRight className="h-4 w-4" />}
+      </a>
+    );
+  }
 
   return (
     <section className="pt-6">
@@ -49,19 +84,17 @@ export default function Hero() {
               </p>
 
               <div className="mt-8 flex flex-wrap gap-4">
-                <a
-                  href={slide.primaryHref}
-                  className="inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-primary-950 transition hover:-translate-y-0.5"
-                >
-                  {slide.primaryCta}
-                  <ArrowRight className="h-4 w-4" />
-                </a>
-                <a
-                  href={slide.secondaryHref}
-                  className="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-white/15"
-                >
-                  {slide.secondaryCta}
-                </a>
+                {renderHeroAction(
+                  slide.primaryHref,
+                  slide.primaryCta,
+                  "inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-primary-950 transition hover:-translate-y-0.5",
+                  true
+                )}
+                {renderHeroAction(
+                  slide.secondaryHref,
+                  slide.secondaryCta,
+                  "inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-white/15"
+                )}
               </div>
 
               <div className="mt-10 grid max-w-xl gap-4 sm:grid-cols-2">
@@ -120,7 +153,10 @@ export default function Hero() {
           </div>
 
           <div className="absolute bottom-6 left-6 right-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between lg:bottom-8 lg:left-10 lg:right-10">
-            <div className="flex gap-2">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-white">
+                {String(activeSlide + 1).padStart(2, "0")} / {String(premiumHeroSlides.length).padStart(2, "0")}
+              </div>
               {premiumHeroSlides.map((entry, index) => (
                 <button
                   key={entry.id}

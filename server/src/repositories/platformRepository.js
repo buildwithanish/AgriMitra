@@ -1,4 +1,5 @@
 import { Alert } from "../models/Alert.js";
+import { ContactLead } from "../models/ContactLead.js";
 import { Farm } from "../models/Farm.js";
 import { Prediction } from "../models/Prediction.js";
 import { SensorData } from "../models/SensorData.js";
@@ -10,7 +11,8 @@ const mockStore = {
   farms: [],
   sensorData: [],
   predictions: [],
-  alerts: []
+  alerts: [],
+  contactLeads: []
 };
 
 function createId(prefix) {
@@ -305,4 +307,40 @@ export async function listAlerts(options = {}) {
   }
 
   return query.lean();
+}
+
+export async function createContactLead(payload) {
+  if (isMockDatabase()) {
+    const lead = createTimestampedRecord("lead", {
+      status: "new",
+      source: "website",
+      ...payload
+    });
+
+    mockStore.contactLeads.push(lead);
+    return toPlain(lead);
+  }
+
+  const lead = await ContactLead.create(payload);
+  return toPlain(lead);
+}
+
+export async function listContactLeads(options = {}) {
+  const { limit } = options;
+
+  if (isMockDatabase()) {
+    return applyLimit(sortByNewest(mockStore.contactLeads), limit).map(toPlain);
+  }
+
+  const query = ContactLead.find().sort({ createdAt: -1 });
+
+  if (typeof limit === "number") {
+    query.limit(limit);
+  }
+
+  return query.lean();
+}
+
+export async function countContactLeads() {
+  return isMockDatabase() ? mockStore.contactLeads.length : ContactLead.countDocuments();
 }

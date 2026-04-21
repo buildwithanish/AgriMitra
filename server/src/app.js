@@ -6,6 +6,7 @@ import aiRoutes from "./routes/aiRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import integrationRoutes from "./routes/integrationRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import contactRoutes from "./routes/contactRoutes.js";
 import sensorRoutes from "./routes/sensorRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import subscriptionRoutes from "./routes/subscriptionRoutes.js";
@@ -21,7 +22,20 @@ function isAllowedOrigin(origin) {
     return true;
   }
 
-  return env.clientUrls.includes(origin);
+  if (env.clientUrls.includes(origin)) {
+    return true;
+  }
+
+  if (!env.allowPublicCors) {
+    return false;
+  }
+
+  try {
+    const { protocol } = new URL(origin);
+    return protocol === "https:" || protocol === "http:";
+  } catch {
+    return false;
+  }
 }
 
 app.use(
@@ -55,6 +69,7 @@ app.use("/api/ai", protect, aiRoutes);
 app.use("/api/dashboard", protect, dashboardRoutes);
 app.use("/api/integrations", protect, integrationRoutes);
 app.use("/api/admin", protect, authorize("admin"), adminRoutes);
+app.use("/api/contact", contactRoutes);
 app.use("/api/sensors", protect, sensorRoutes);
 app.use("/api/notifications", protect, notificationRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);

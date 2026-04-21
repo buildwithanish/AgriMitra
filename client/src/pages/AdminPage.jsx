@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Bar,
@@ -73,6 +73,17 @@ const defaultAdmin = {
     { zone: "East cluster", active: 81 },
     { zone: "Canal belt", active: 88 },
     { zone: "Highland belt", active: 75 }
+  ],
+  contactLeads: [
+    {
+      _id: "lead-1",
+      name: "Suresh Patil",
+      email: "suresh@demo-farm.in",
+      phone: "+91 98765 43210",
+      role: "farmer",
+      interest: "starter-plan",
+      status: "new"
+    }
   ]
 };
 
@@ -84,15 +95,23 @@ export default function AdminPage() {
   const navigate = useNavigate();
   const [dashboard, setDashboard] = useState(defaultAdmin);
   const [voiceQuery, setVoiceQuery] = useState("");
+  const planMix = useMemo(() => {
+    return dashboard.users.reduce((accumulator, item) => {
+      const key = item.plan || item.subscriptionPlan || "starter";
+      accumulator[key] = (accumulator[key] || 0) + 1;
+      return accumulator;
+    }, {});
+  }, [dashboard.users]);
 
   useEffect(() => {
     async function loadAdminData() {
       try {
-        const [dashboardResponse, userResponse, analyticsResponse, sensorResponse] = await Promise.all([
+        const [dashboardResponse, userResponse, analyticsResponse, sensorResponse, contactResponse] = await Promise.all([
           api.get("/dashboard/admin"),
           api.get("/admin/users"),
           api.get("/admin/analytics"),
-          api.get("/sensors")
+          api.get("/sensors"),
+          api.get("/contact")
         ]);
 
         setDashboard((current) => ({
@@ -100,6 +119,7 @@ export default function AdminPage() {
           ...dashboardResponse.data,
           users: userResponse.data?.users || current.users,
           sensors: sensorResponse.data?.sensors || current.sensors,
+          contactLeads: contactResponse.data?.leads || current.contactLeads,
           predictionMix: analyticsResponse.data?.predictionMix || current.predictionMix,
           revenueTrend: analyticsResponse.data?.revenueTrend || current.revenueTrend,
           userGrowth: analyticsResponse.data?.userGrowth || current.userGrowth,
@@ -137,14 +157,14 @@ export default function AdminPage() {
             notificationCount={6}
           />
 
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div id="admin-overview" className="scroll-mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             <MetricCard label="Total users" value={dashboard.metrics.totalUsers} delta="+14.8%" />
             <MetricCard label="Monthly revenue" value={dashboard.metrics.monthlyRevenue} delta="MRR" tone="accent" />
             <MetricCard label="Active sensors" value={dashboard.metrics.activeSensors} delta="97% uptime" />
             <MetricCard label="Prediction accuracy" value={dashboard.metrics.predictionAccuracy} delta="weighted" tone="success" />
           </div>
 
-          <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+          <div id="admin-revenue" className="scroll-mt-8 grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
             <ChartBlock title="Revenue dashboard" subtitle="Subscription growth and monetization trend">
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
@@ -182,7 +202,7 @@ export default function AdminPage() {
             </ChartBlock>
           </div>
 
-          <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+          <div id="admin-analytics" className="scroll-mt-8 grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
             <ChartBlock title="User growth" subtitle="Farmers and admins onboarded over time">
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
@@ -197,7 +217,7 @@ export default function AdminPage() {
               </div>
             </ChartBlock>
 
-            <GlassPanel className="rounded-[30px] p-6">
+            <GlassPanel id="admin-ai" className="scroll-mt-8 rounded-[30px] p-6">
               <h3 className="font-display text-2xl font-bold text-slate-950 dark:text-white">AI predictions overview</h3>
               <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                 Operational readout of the highest-volume AI modules.
@@ -243,7 +263,7 @@ export default function AdminPage() {
               </div>
             </ChartBlock>
 
-            <GlassPanel className="rounded-[30px] p-6">
+            <GlassPanel id="admin-users" className="scroll-mt-8 rounded-[30px] p-6">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
                   <h3 className="font-display text-2xl font-bold text-slate-950 dark:text-white">Manage users</h3>
@@ -298,7 +318,7 @@ export default function AdminPage() {
             </GlassPanel>
           </div>
 
-          <GlassPanel className="rounded-[30px] p-6">
+          <GlassPanel id="admin-sensors" className="scroll-mt-8 rounded-[30px] p-6">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <h3 className="font-display text-2xl font-bold text-slate-950 dark:text-white">Manage sensors</h3>
@@ -330,6 +350,94 @@ export default function AdminPage() {
                   <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">Status: {sensor.status}</p>
                 </div>
               ))}
+            </div>
+          </GlassPanel>
+
+          <div id="admin-leads" className="scroll-mt-8 grid gap-6 xl:grid-cols-[0.92fr_1.08fr]">
+            <GlassPanel className="rounded-[30px] p-6">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-display text-2xl font-bold text-slate-950 dark:text-white">Subscription mix</h3>
+                  <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                    Users segmented by current plan visibility.
+                  </p>
+                </div>
+                <span className="rounded-full bg-primary-500/10 px-4 py-2 text-sm font-semibold text-primary-700 dark:text-primary-300">
+                  {Object.keys(planMix).length} plans active
+                </span>
+              </div>
+
+              <div className="mt-6 grid gap-4 md:grid-cols-3">
+                {Object.entries(planMix).map(([plan, count]) => (
+                  <div
+                    key={plan}
+                    className="rounded-[24px] border border-slate-200/70 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5"
+                  >
+                    <p className="text-xs uppercase tracking-[0.18em] text-primary-700 dark:text-primary-300">{plan}</p>
+                    <p className="mt-3 text-3xl font-bold text-slate-950 dark:text-white">{count}</p>
+                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">accounts on this plan</p>
+                  </div>
+                ))}
+              </div>
+            </GlassPanel>
+
+            <GlassPanel className="rounded-[30px] p-6">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-display text-2xl font-bold text-slate-950 dark:text-white">Contact registrations</h3>
+                  <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                    Leads captured from the website contact and registration modal.
+                  </p>
+                </div>
+                <span className="rounded-full bg-accent-500/10 px-4 py-2 text-sm font-semibold text-accent-800 dark:text-accent-200">
+                  {dashboard.contactLeads.length} leads
+                </span>
+              </div>
+
+              <div className="mt-6 space-y-3">
+                {dashboard.contactLeads.map((lead) => (
+                  <div
+                    key={lead._id}
+                    className="rounded-[24px] border border-slate-200/70 bg-white/80 p-4 dark:border-white/10 dark:bg-white/5"
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <p className="font-semibold text-slate-900 dark:text-white">{lead.name}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{lead.email}</p>
+                        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{lead.phone || "Phone not shared"}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs uppercase tracking-[0.18em] text-primary-700 dark:text-primary-300">{lead.interest}</p>
+                        <p className="mt-2 text-sm font-medium capitalize text-slate-600 dark:text-slate-300">{lead.role}</p>
+                        <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-accent-700 dark:text-accent-300">
+                          {lead.status || "new"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </GlassPanel>
+          </div>
+
+          <GlassPanel id="admin-settings" className="scroll-mt-8 rounded-[30px] p-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h3 className="font-display text-2xl font-bold text-slate-950 dark:text-white">Workspace settings</h3>
+                <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-500 dark:text-slate-400">
+                  Demo-ready controls for roles, subscriptions, CORS-safe deployment, and contact lead routing.
+                </p>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3">
+                {["Role access", "Lead routing", "Billing mock"].map((item) => (
+                  <span
+                    key={item}
+                    className="rounded-2xl bg-primary-500/10 px-4 py-3 text-sm font-semibold text-primary-700 dark:text-primary-200"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
             </div>
           </GlassPanel>
         </div>

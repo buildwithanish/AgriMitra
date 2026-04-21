@@ -22,6 +22,7 @@ import TopBar from "../components/dashboard/TopBar";
 import MetricCard from "../components/dashboard/MetricCard";
 import ChartBlock from "../components/dashboard/ChartBlock";
 import AIWorkbench from "../components/dashboard/AIWorkbench";
+import FeatureAccessHub from "../components/dashboard/FeatureAccessHub";
 import GlassPanel from "../components/GlassPanel";
 
 const defaultDashboard = {
@@ -157,14 +158,14 @@ export default function DashboardPage() {
             notificationCount={dashboard.alerts?.length || 0}
           />
 
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div id="dashboard-overview" className="scroll-mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             <MetricCard label="Crop health score" value={dashboard.metrics.cropScore} delta="+4.2%" tone="success" />
             <MetricCard label="Income upside" value={dashboard.metrics.incomePotential} delta="AI pricing" tone="accent" />
             <MetricCard label="Active alerts" value={dashboard.metrics.alertCount} delta="Realtime" />
             <MetricCard label="Market timing" value={dashboard.metrics.mandiWindow} delta="Optimal sell window" />
           </div>
 
-          <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+          <div id="farmer-market" className="scroll-mt-8 grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
             <ChartBlock title="Market price prediction" subtitle="Expected mandi curve for the next 5 trading days">
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
@@ -215,7 +216,7 @@ export default function DashboardPage() {
             </ChartBlock>
           </div>
 
-          <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+          <div id="farmer-crops" className="scroll-mt-8 grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
             <ChartBlock title="Yield prediction" subtitle="4-week harvest outlook based on current simulation">
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
@@ -261,9 +262,15 @@ export default function DashboardPage() {
             </ChartBlock>
           </div>
 
-          <AIWorkbench />
+          <div id="farmer-ai-lab" className="scroll-mt-8">
+            <AIWorkbench />
+          </div>
 
-          <div className="grid gap-6 xl:grid-cols-[0.92fr_1.08fr]">
+          <div id="farmer-features" className="scroll-mt-8">
+            <FeatureAccessHub subscriptionPlan={user?.subscriptionPlan || "starter"} />
+          </div>
+
+          <div id="farmer-alerts" className="scroll-mt-8 grid gap-6 xl:grid-cols-[0.92fr_1.08fr]">
             <ChartBlock title="Alerts & notifications" subtitle="Streaming in from the backend notification system">
               <div className="space-y-4">
                 {dashboard.alerts.map((alert) => (
@@ -327,6 +334,25 @@ export default function DashboardPage() {
               </div>
             </GlassPanel>
           </div>
+
+          <GlassPanel id="farmer-billing" className="scroll-mt-8 rounded-[30px] p-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary-700 dark:text-primary-300">
+                  Subscription workspace
+                </p>
+                <h3 className="mt-2 font-display text-2xl font-bold text-slate-950 dark:text-white">
+                  Rs 99/month starter access
+                </h3>
+                <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-600 dark:text-slate-300">
+                  Demo mode keeps all 22 farmer modules unlocked while still showing the subscription experience.
+                </p>
+              </div>
+              <div className="rounded-2xl bg-primary-500/10 px-4 py-3 text-sm font-semibold text-primary-700 dark:text-primary-200">
+                Plan: {user?.subscriptionPlan || "starter"}
+              </div>
+            </div>
+          </GlassPanel>
         </div>
       </div>
     </motion.div>

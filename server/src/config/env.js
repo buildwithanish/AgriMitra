@@ -11,6 +11,7 @@ export const env = {
     .split(",")
     .map((value) => value.trim())
     .filter(Boolean),
+  allowPublicCors: process.env.ALLOW_PUBLIC_CORS !== "false",
   mongodbUri: process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/ai-village-brain",
   allowMockDatabaseFallback: process.env.ALLOW_MOCK_DB_FALLBACK !== "false",
   jwtSecret: process.env.JWT_SECRET || "super-secret-ai-village-brain",

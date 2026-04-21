@@ -1,4 +1,5 @@
 import {
+  countContactLeads,
   countPredictions,
   countSensors,
   countUsers,
@@ -12,11 +13,19 @@ export const listUsers = asyncHandler(async (req, res) => {
 });
 
 export const analytics = asyncHandler(async (req, res) => {
-  const [predictionCount, sensorCount, userCount] = await Promise.all([
+  const users = await listPlatformUsers();
+  const [predictionCount, sensorCount, userCount, contactLeadCount] = await Promise.all([
     countPredictions(),
     countSensors(),
-    countUsers()
+    countUsers(),
+    countContactLeads()
   ]);
+
+  const planMix = users.reduce((accumulator, item) => {
+    const plan = item.plan || item.subscriptionPlan || "starter";
+    accumulator[plan] = (accumulator[plan] || 0) + 1;
+    return accumulator;
+  }, {});
 
   res.json({
     success: true,
@@ -24,6 +33,8 @@ export const analytics = asyncHandler(async (req, res) => {
       predictionCount,
       sensorCount,
       userCount,
+      contactLeadCount,
+      planMix,
       predictionMix: [
         { name: "Crop", value: 31 },
         { name: "Yield", value: 22 },

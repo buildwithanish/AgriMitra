@@ -1,11 +1,22 @@
 import { io } from "socket.io-client";
+import { getSocketBaseUrl } from "../config/runtime";
 
 let socket;
+const noopSocket = {
+  on() {},
+  off() {}
+};
 
 export function getSocket() {
+  if (typeof window === "undefined") {
+    return noopSocket;
+  }
+
   if (!socket) {
-    socket = io(import.meta.env.VITE_SOCKET_URL || "http://localhost:5000", {
-      transports: ["websocket", "polling"]
+    socket = io(getSocketBaseUrl(), {
+      transports: ["websocket", "polling"],
+      reconnectionAttempts: 3,
+      timeout: 5000
     });
   }
 
