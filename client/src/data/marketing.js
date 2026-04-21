@@ -160,7 +160,7 @@ export const headerNavigation = [
 ];
 
 export const topBarInfo = {
-  message: "Are you ready to grow your farm? Contact Us",
+  message: "Are you ready to grow your farm?",
   email: "support@aivillagebrain.com",
   hours: "Mon - Fri: 9:00 AM to 6:00 PM"
 };
@@ -180,7 +180,7 @@ export const premiumHeroSlides = [
     description:
       "Blend crop intelligence, sensor telemetry, satellite monitoring, and market timing into one beautiful command layer.",
     primaryCta: "Start Growing Now",
-    secondaryCta: "See Platform Demo",
+    secondaryCta: "See Platform Tour",
     primaryHref: "/login",
     secondaryHref: "/#dashboard-preview",
     metrics: [
@@ -212,7 +212,7 @@ export const premiumHeroSlides = [
     eyebrow: "Profitability engine",
     title: "Turn farm data into stronger income decisions",
     description:
-      "From fertilizer optimization to WhatsApp AI and digital twin simulations, every module is designed to improve margins.",
+      "From fertilizer optimization to WhatsApp AI and digital twin scenario modeling, every module is designed to improve margins.",
     primaryCta: "View Dashboard Preview",
     secondaryCta: "Subscribe for Updates",
     primaryHref: "/#dashboard-preview",
@@ -280,7 +280,7 @@ export const premiumHeroSlides = [
     eyebrow: "Satellite intelligence",
     title: "Detect crop stress earlier with remote monitoring layers",
     description:
-      "Use simulated satellite health scoring and plot-level pattern recognition to prioritize on-ground action faster.",
+      "Use satellite-style health scoring and plot-level pattern recognition to prioritize on-ground action faster.",
     primaryCta: "View Dashboard Preview",
     secondaryCta: "Read Testimonials",
     primaryHref: "/#dashboard-preview",
@@ -331,22 +331,22 @@ export const premiumHeroSlides = [
     eyebrow: "Insurance + resilience",
     title: "Model risk before it becomes a costly season surprise",
     description:
-      "Use insurance prediction, digital twin simulation, and alerting to manage uncertainty with a more strategic view.",
+      "Use insurance prediction, digital twin scenario modeling, and alerting to manage uncertainty with a more strategic view.",
     primaryCta: "Start Growing Now",
     secondaryCta: "Explore Platform",
     primaryHref: "/login",
     secondaryHref: "/features",
     metrics: [
       { label: "Risk score checks", value: "12.4K" },
-      { label: "Scenarios simulated", value: "3.1K" }
+      { label: "Scenarios modeled", value: "3.1K" }
     ]
   }
 ];
 
 export const aboutHighlights = [
-  "Premium startup-grade interface inspired by modern SaaS product templates",
+  "Premium startup-grade interface with a custom agriculture product language",
   "Field-first intelligence for AI planning, alerts, weather, and revenue insights",
-  "Designed to scale from demo environments to real deployments"
+  "Designed to scale from local pilots to live district deployments"
 ];
 
 export const services = [
@@ -618,7 +618,7 @@ export const footerContactStrip = [
   },
   {
     title: "Phone",
-    value: "+91 XXXXX XXXXX",
+    value: "+91 9509868673",
     icon: PhoneCall
   }
 ];

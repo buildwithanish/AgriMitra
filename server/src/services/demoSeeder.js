@@ -9,7 +9,7 @@ import {
   createUser
 } from "../repositories/platformRepository.js";
 
-export async function seedDemoData() {
+export async function seedInitialData() {
   const userCount = await countUsers();
 
   if (userCount > 0) {
@@ -31,7 +31,7 @@ export async function seedDemoData() {
   });
 
   const farmer = await createUser({
-    name: "Farmer Demo",
+    name: "Farmer Workspace",
     email: "farmer@aivillagebrain.com",
     password: farmerPassword,
     role: "farmer",
@@ -59,7 +59,7 @@ export async function seedDemoData() {
 
   const farm = await createFarm({
     owner: farmer._id,
-    name: "GreenRise Demo Farm",
+    name: "GreenRise Farm",
     location: {
       village: "Pimpalgaon",
       district: "Nashik",
@@ -205,8 +205,8 @@ export async function seedDemoData() {
   await Promise.all([
     createContactLead({
       name: "Suresh Patil",
-      email: "suresh@demo-farm.in",
-      phone: "+91 98765 43210",
+      email: "suresh@greenrise.in",
+      phone: "+91 9509868673",
       role: "farmer",
       interest: "starter-plan",
       message: "Need guidance for wheat advisory and mobile alerts.",
@@ -215,16 +215,16 @@ export async function seedDemoData() {
     createContactLead({
       name: "Aditi Sharma",
       email: "aditi@clusterops.in",
-      phone: "+91 91234 56789",
+      phone: "+91 9509868673",
       role: "operator",
-      interest: "enterprise-demo",
+      interest: "enterprise-consultation",
       message: "Looking for district-level rollout with admin analytics and contact workflows.",
       source: "contact-modal"
     }),
     createContactLead({
       name: "Rahul Deshmukh",
       email: "rahul@mandiwatch.in",
-      phone: "+91 99887 76655",
+      phone: "+91 9509868673",
       role: "agribusiness",
       interest: "integration-help",
       message: "Need market prediction APIs and subscription setup for our field team.",
@@ -232,5 +232,5 @@ export async function seedDemoData() {
     })
   ]);
 
-  console.log("Demo data seeded successfully");
+  console.log("Initial platform data seeded successfully");
 }

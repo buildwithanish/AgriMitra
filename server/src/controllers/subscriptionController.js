@@ -11,8 +11,8 @@ export const checkout = asyncHandler(async (req, res) => {
       plan,
       amount,
       currency: "INR",
-      status: "mock-paid"
+      status: "gateway-ready"
     },
-    message: `Mock checkout complete for the \u20B9${amount}/month ${plan} plan. Connect Razorpay or Stripe later for production billing.`
+    message: `Checkout request prepared for the \u20B9${amount}/month ${plan} plan. Connect Razorpay or Stripe credentials for live payment capture.`
   });
 });

@@ -153,7 +153,7 @@ export default function AIWorkbench() {
           <div>
             <h3 className="font-display text-2xl font-bold text-slate-950 dark:text-white">AI workbench</h3>
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              Trigger all core AI APIs with demo-friendly inputs.
+              Trigger all core AI APIs with production-safe default inputs.
             </p>
           </div>
         </div>
@@ -244,7 +244,7 @@ export default function AIWorkbench() {
           className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-primary-600 px-5 py-3 font-semibold text-white transition hover:bg-primary-500 disabled:cursor-not-allowed disabled:opacity-70"
         >
           <Sparkles className="h-4 w-4" />
-          {loading ? "Running AI simulation..." : `Run ${action.label}`}
+          {loading ? "Running AI engine..." : `Run ${action.label}`}
         </button>
       </div>
 
@@ -255,7 +255,7 @@ export default function AIWorkbench() {
           </div>
           <div>
             <h3 className="font-display text-2xl font-bold">Result console</h3>
-            <p className="text-sm text-primary-100/70">Structured output from the selected AI module.</p>
+            <p className="text-sm text-primary-100/70">Structured output from the selected backend AI module.</p>
           </div>
         </div>
 

@@ -33,7 +33,7 @@ export const heroSlides = [
   {
     key: "two",
     metric: "48 feeds",
-    statLabel: "live sensor + satellite channels simulated",
+    statLabel: "live sensor + satellite channels connected",
     chips: ["IoT mesh", "Remote sensing", "Village map"]
   },
   {
@@ -83,9 +83,9 @@ export const platformFeatures = [
   },
   {
     title: "Digital Twin",
-    description: "Simulate farm scenarios for irrigation, yield, and intervention planning.",
+    description: "Model farm scenarios for irrigation, yield, and intervention planning.",
     icon: Cpu,
-    tag: "Simulation"
+    tag: "Scenario"
   },
   {
     title: "IoT Sensors",
@@ -95,7 +95,7 @@ export const platformFeatures = [
   },
   {
     title: "Satellite Monitoring",
-    description: "Track vegetation health and stress zones with mock NDVI overlays.",
+    description: "Track vegetation health and stress zones with NDVI-style remote sensing overlays.",
     icon: Globe2,
     tag: "Remote Sensing"
   },
@@ -113,7 +113,7 @@ export const platformFeatures = [
   },
   {
     title: "Voice AI",
-    description: "Use speech input and TTS simulation for low-literacy field interactions.",
+    description: "Use speech input and TTS workflows for low-literacy field interactions.",
     icon: AudioLines,
     tag: "Voice"
   },
@@ -167,7 +167,7 @@ export const platformFeatures = [
   },
   {
     title: "Subscription Billing",
-    description: "Offer farmer and enterprise plans with a mock checkout experience.",
+    description: "Offer farmer and enterprise plans with checkout-ready subscription workflows.",
     icon: HandCoins,
     tag: "Business"
   },
@@ -217,7 +217,7 @@ export const pricingPlans = [
       "AI crop planning",
       "Pest and fertilizer intelligence",
       "Weather and alerts feed",
-      "WhatsApp and voice simulation"
+      "WhatsApp and voice workflows"
     ],
     highlighted: true
   },

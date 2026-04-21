@@ -18,8 +18,10 @@ function AppLayout() {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-primary-950 text-slate-900 transition-colors duration-500 dark:text-white">
-      {!isWorkspaceView && <Header />}
-      <main className={isWorkspaceView ? "min-h-screen" : "pt-28 md:pt-36 lg:pt-40"}>
+      {!isWorkspaceView && (
+        <Header />
+      )}
+      <main className={isWorkspaceView ? "min-h-screen" : "pt-32 md:pt-40 lg:pt-44"}>
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<LandingPage />} />

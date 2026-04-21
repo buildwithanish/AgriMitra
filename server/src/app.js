@@ -7,7 +7,9 @@ import dashboardRoutes from "./routes/dashboardRoutes.js";
 import integrationRoutes from "./routes/integrationRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
+import featureRoutes from "./routes/featureRoutes.js";
 import sensorRoutes from "./routes/sensorRoutes.js";
+import settingsRoutes from "./routes/settingsRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import subscriptionRoutes from "./routes/subscriptionRoutes.js";
 import { authorize, protect } from "./middleware/auth.js";
@@ -66,10 +68,12 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/ai", protect, aiRoutes);
+app.use("/api/features", protect, featureRoutes);
 app.use("/api/dashboard", protect, dashboardRoutes);
 app.use("/api/integrations", protect, integrationRoutes);
 app.use("/api/admin", protect, authorize("admin"), adminRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/api/settings", settingsRoutes);
 app.use("/api/sensors", protect, sensorRoutes);
 app.use("/api/notifications", protect, notificationRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);

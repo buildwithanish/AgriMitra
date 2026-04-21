@@ -13,7 +13,7 @@ const resources = {
       },
       common: {
         getStarted: "Get Started",
-        demo: "Book Demo",
+        demo: "Book Tour",
         live: "Live intelligence for every acre",
         viewPlan: "Choose \u20B999 plan"
       },
@@ -39,11 +39,11 @@ const resources = {
         testimonialsTitle: "Teams using AI Village Brain move faster",
         testimonialsBody: "Built to look boardroom-ready while staying practical for field teams.",
         pricingTitle: "Simple subscription for village-scale impact",
-        pricingBody: "Start with a flat monthly plan and mock checkout flow, then connect a real payment gateway later."
+        pricingBody: "Start with a flat monthly plan and connect Razorpay or Stripe credentials for live payment capture."
       },
       auth: {
         title: "Sign in to your village intelligence workspace",
-        subtitle: "Use demo accounts or create a new farmer/admin profile.",
+        subtitle: "Use quick access credentials or create a new farmer/admin profile.",
         login: "Login",
         signup: "Create account"
       },
@@ -68,7 +68,7 @@ const resources = {
       },
       common: {
         getStarted: "शुरू करें",
-        demo: "डेमो देखें",
+        demo: "प्लेटफॉर्म टूर",
         live: "हर खेत के लिए लाइव इंटेलिजेंस",
         viewPlan: "\u20B999 प्लान चुनें"
       },
@@ -94,11 +94,11 @@ const resources = {
         testimonialsTitle: "AI Village Brain के साथ टीमें तेज़ी से काम करती हैं",
         testimonialsBody: "प्रीमियम SaaS लुक के साथ ग्राउंड ऑपरेशंस के लिए व्यावहारिक डिज़ाइन।",
         pricingTitle: "गांव स्तर के प्रभाव के लिए आसान सब्सक्रिप्शन",
-        pricingBody: "\u20B999 मासिक प्लान से शुरू करें और बाद में असली payment gateway जोड़ें।"
+        pricingBody: "\u20B999 मासिक प्लान से शुरू करें और Razorpay या Stripe credentials जोड़कर live payment capture करें।"
       },
       auth: {
         title: "अपने village intelligence workspace में लॉगिन करें",
-        subtitle: "डेमो अकाउंट इस्तेमाल करें या नया किसान/एडमिन प्रोफाइल बनाएं।",
+        subtitle: "Quick access credentials इस्तेमाल करें या नया किसान/एडमिन प्रोफाइल बनाएं।",
         login: "लॉगिन",
         signup: "अकाउंट बनाएं"
       },

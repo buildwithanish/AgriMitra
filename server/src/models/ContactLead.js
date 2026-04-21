@@ -23,7 +23,7 @@ const contactLeadSchema = new mongoose.Schema(
     },
     interest: {
       type: String,
-      default: "demo"
+      default: "general"
     },
     message: {
       type: String,

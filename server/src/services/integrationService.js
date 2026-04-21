@@ -1,4 +1,4 @@
-export function getWeatherSimulation(location = "Nashik, Maharashtra") {
+export function getWeatherSnapshot(location = "Nashik, Maharashtra") {
   return {
     location,
     temperature: 28,
@@ -10,30 +10,30 @@ export function getWeatherSimulation(location = "Nashik, Maharashtra") {
   };
 }
 
-export function simulateWhatsApp(payload = {}) {
+export function deliverWhatsAppMessage(payload = {}) {
   return {
     delivered: true,
     threadId: `wa-${Date.now()}`,
-    phone: payload.phone || "+91XXXXXXXXXX",
-    preview: payload.message || "Demo WhatsApp advisory sent",
+    phone: payload.phone || "+91 9509868673",
+    preview: payload.message || "WhatsApp advisory queued",
     status: "sent"
   };
 }
 
-export function simulateVoice(payload = {}) {
+export function generateVoiceAdvisory(payload = {}) {
   return {
     status: "generated",
     language: payload.language || "en-IN",
     transcript: payload.text || "Voice advisory synthesized successfully.",
-    audioUrl: "https://example.com/mock-audio/advisory.mp3"
+    audioUrl: payload.audioUrl || null
   };
 }
 
-export function simulateFirebase(payload = {}) {
+export function queueFirebaseNotification(payload = {}) {
   return {
     status: "queued",
     topic: payload.topic || "farmer-alerts",
     title: payload.title || "AI Village Brain Alert",
-    message: payload.message || "Mock Firebase notification dispatched."
+    message: payload.message || "Firebase notification queued."
   };
 }

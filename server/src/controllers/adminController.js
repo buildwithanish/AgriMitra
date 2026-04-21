@@ -3,13 +3,38 @@ import {
   countPredictions,
   countSensors,
   countUsers,
-  listUsers as listPlatformUsers
+  listUsers as listPlatformUsers,
+  updateUser as updatePlatformUser
 } from "../repositories/platformRepository.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 export const listUsers = asyncHandler(async (req, res) => {
   const users = await listPlatformUsers();
   res.json({ success: true, data: { users } });
+});
+
+export const updateUser = asyncHandler(async (req, res) => {
+  const { role, subscriptionPlan, farmCount, language, name } = req.body;
+
+  if (role && !["admin", "farmer"].includes(role)) {
+    res.status(400);
+    throw new Error("Invalid role");
+  }
+
+  const user = await updatePlatformUser(req.params.id, {
+    role,
+    subscriptionPlan,
+    farmCount: farmCount === undefined ? undefined : Number(farmCount),
+    language,
+    name
+  });
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  res.json({ success: true, data: { user }, message: "User updated successfully" });
 });
 
 export const analytics = asyncHandler(async (req, res) => {

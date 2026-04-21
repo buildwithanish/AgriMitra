@@ -24,6 +24,7 @@ import TopBar from "../components/dashboard/TopBar";
 import MetricCard from "../components/dashboard/MetricCard";
 import ChartBlock from "../components/dashboard/ChartBlock";
 import GlassPanel from "../components/GlassPanel";
+import AdminSettingsPanel from "../components/admin/AdminSettingsPanel";
 
 const defaultAdmin = {
   metrics: {
@@ -64,9 +65,9 @@ const defaultAdmin = {
     { title: "Pest detection", score: "91%", volume: "5.6k runs" }
   ],
   sensors: [
-    { _id: "1", sensorType: "Soil Moisture", value: 41, unit: "%", status: "active", farm: { name: "GreenRise Demo Farm" } },
-    { _id: "2", sensorType: "Soil pH", value: 6.7, unit: "pH", status: "active", farm: { name: "GreenRise Demo Farm" } },
-    { _id: "3", sensorType: "Temperature", value: 28, unit: "\u00B0C", status: "active", farm: { name: "GreenRise Demo Farm" } }
+    { _id: "1", sensorType: "Soil Moisture", value: 41, unit: "%", status: "active", farm: { name: "GreenRise Farm" } },
+    { _id: "2", sensorType: "Soil pH", value: 6.7, unit: "pH", status: "active", farm: { name: "GreenRise Farm" } },
+    { _id: "3", sensorType: "Temperature", value: 28, unit: "\u00B0C", status: "active", farm: { name: "GreenRise Farm" } }
   ],
   sensorHealth: [
     { zone: "North cluster", active: 92 },
@@ -78,8 +79,8 @@ const defaultAdmin = {
     {
       _id: "lead-1",
       name: "Suresh Patil",
-      email: "suresh@demo-farm.in",
-      phone: "+91 98765 43210",
+      email: "suresh@greenrise.in",
+      phone: "+91 9509868673",
       role: "farmer",
       interest: "starter-plan",
       status: "new"
@@ -95,6 +96,7 @@ export default function AdminPage() {
   const navigate = useNavigate();
   const [dashboard, setDashboard] = useState(defaultAdmin);
   const [voiceQuery, setVoiceQuery] = useState("");
+  const [adminError, setAdminError] = useState("");
   const planMix = useMemo(() => {
     return dashboard.users.reduce((accumulator, item) => {
       const key = item.plan || item.subscriptionPlan || "starter";
@@ -125,8 +127,9 @@ export default function AdminPage() {
           userGrowth: analyticsResponse.data?.userGrowth || current.userGrowth,
           sensorHealth: analyticsResponse.data?.sensorHealth || current.sensorHealth
         }));
+        setAdminError("");
       } catch (error) {
-        console.error(error);
+        setAdminError(error.message);
       }
     }
 
@@ -136,6 +139,25 @@ export default function AdminPage() {
   function handleLogout() {
     logout();
     navigate("/");
+  }
+
+  async function updateUserRecord(userId, patch) {
+    try {
+      const response = await api.put(`/admin/users/${userId}`, patch);
+      const updatedUser = response.data?.user;
+
+      if (!updatedUser) {
+        return;
+      }
+
+      setDashboard((current) => ({
+        ...current,
+        users: current.users.map((item) => (item._id === userId ? { ...item, ...updatedUser } : item))
+      }));
+      setAdminError("");
+    } catch (error) {
+      setAdminError(error.message);
+    }
   }
 
   return (
@@ -156,6 +178,12 @@ export default function AdminPage() {
             voiceQuery={voiceQuery}
             notificationCount={6}
           />
+
+          {adminError && (
+            <div className="rounded-[24px] border border-amber-200 bg-amber-50 px-5 py-4 text-sm font-semibold text-amber-800 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-100">
+              Admin data is showing safe fallback values while the API reconnects: {adminError}
+            </div>
+          )}
 
           <div id="admin-overview" className="scroll-mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             <MetricCard label="Total users" value={dashboard.metrics.totalUsers} delta="+14.8%" />
@@ -301,8 +329,27 @@ export default function AdminPage() {
                           <p className="font-semibold text-slate-900 dark:text-white">{item.name}</p>
                           <p className="text-slate-500 dark:text-slate-400">{item.email}</p>
                         </td>
-                        <td className="py-4 pr-4 capitalize text-slate-700 dark:text-slate-200">{item.role}</td>
-                        <td className="py-4 pr-4 capitalize text-slate-700 dark:text-slate-200">{item.plan}</td>
+                        <td className="py-4 pr-4 capitalize text-slate-700 dark:text-slate-200">
+                          <select
+                            value={item.role}
+                            onChange={(event) => updateUserRecord(item._id, { role: event.target.value })}
+                            className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none dark:border-white/10 dark:bg-white/5"
+                          >
+                            <option value="farmer">Farmer</option>
+                            <option value="admin">Admin</option>
+                          </select>
+                        </td>
+                        <td className="py-4 pr-4 capitalize text-slate-700 dark:text-slate-200">
+                          <select
+                            value={item.plan || item.subscriptionPlan || "starter"}
+                            onChange={(event) => updateUserRecord(item._id, { subscriptionPlan: event.target.value })}
+                            className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none dark:border-white/10 dark:bg-white/5"
+                          >
+                            <option value="starter">Starter</option>
+                            <option value="growth">Growth</option>
+                            <option value="enterprise">Enterprise</option>
+                          </select>
+                        </td>
                         <td className="py-4 pr-4 text-slate-700 dark:text-slate-200">{item.farms}</td>
                         <td className="py-4">
                           <span className="inline-flex items-center gap-2 rounded-full bg-primary-500/10 px-3 py-1 font-semibold text-primary-700 dark:text-primary-300">
@@ -338,7 +385,7 @@ export default function AdminPage() {
                   className="rounded-[24px] border border-slate-200/70 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5"
                 >
                   <p className="text-xs uppercase tracking-[0.18em] text-primary-700 dark:text-primary-300">
-                    {sensor.farm?.name || "Demo farm"}
+                    {sensor.farm?.name || "Registered farm"}
                   </p>
                   <p className="mt-3 font-display text-xl font-bold text-slate-950 dark:text-white">
                     {sensor.sensorType}
@@ -420,26 +467,7 @@ export default function AdminPage() {
             </GlassPanel>
           </div>
 
-          <GlassPanel id="admin-settings" className="scroll-mt-8 rounded-[30px] p-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <h3 className="font-display text-2xl font-bold text-slate-950 dark:text-white">Workspace settings</h3>
-                <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-500 dark:text-slate-400">
-                  Demo-ready controls for roles, subscriptions, CORS-safe deployment, and contact lead routing.
-                </p>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-3">
-                {["Role access", "Lead routing", "Billing mock"].map((item) => (
-                  <span
-                    key={item}
-                    className="rounded-2xl bg-primary-500/10 px-4 py-3 text-sm font-semibold text-primary-700 dark:text-primary-200"
-                  >
-                    {item}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </GlassPanel>
+          <AdminSettingsPanel />
         </div>
       </div>
     </motion.div>

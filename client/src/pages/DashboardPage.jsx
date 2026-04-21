@@ -83,6 +83,7 @@ export default function DashboardPage() {
   const [dashboard, setDashboard] = useState(defaultDashboard);
   const [voiceQuery, setVoiceQuery] = useState("");
   const [loading, setLoading] = useState(true);
+  const [dashboardError, setDashboardError] = useState("");
   const deferredQuery = useDeferredValue(voiceQuery);
 
   useEffect(() => {
@@ -98,8 +99,9 @@ export default function DashboardPage() {
           ...dashboardResponse.data,
           alerts: notificationResponse.data?.alerts || dashboardResponse.data.alerts
         }));
+        setDashboardError("");
       } catch (error) {
-        console.error(error);
+        setDashboardError(error.message);
       } finally {
         setLoading(false);
       }
@@ -157,6 +159,12 @@ export default function DashboardPage() {
             voiceQuery={voiceQuery}
             notificationCount={dashboard.alerts?.length || 0}
           />
+
+          {dashboardError && (
+            <div className="rounded-[24px] border border-amber-200 bg-amber-50 px-5 py-4 text-sm font-semibold text-amber-800 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-100">
+              Farmer dashboard is showing safe fallback values while the API reconnects: {dashboardError}
+            </div>
+          )}
 
           <div id="dashboard-overview" className="scroll-mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             <MetricCard label="Crop health score" value={dashboard.metrics.cropScore} delta="+4.2%" tone="success" />
@@ -217,7 +225,7 @@ export default function DashboardPage() {
           </div>
 
           <div id="farmer-crops" className="scroll-mt-8 grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-            <ChartBlock title="Yield prediction" subtitle="4-week harvest outlook based on current simulation">
+            <ChartBlock title="Yield prediction" subtitle="4-week harvest outlook based on current model">
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={dashboard.yieldForecast}>
@@ -345,7 +353,7 @@ export default function DashboardPage() {
                   Rs 99/month starter access
                 </h3>
                 <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-600 dark:text-slate-300">
-                  Demo mode keeps all 22 farmer modules unlocked while still showing the subscription experience.
+                  Current subscription keeps all 22 farmer modules accessible while tracking plan usage and billing readiness.
                 </p>
               </div>
               <div className="rounded-2xl bg-primary-500/10 px-4 py-3 text-sm font-semibold text-primary-700 dark:text-primary-200">

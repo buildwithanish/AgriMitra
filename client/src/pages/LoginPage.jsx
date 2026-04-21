@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../contexts/AuthContext";
 import GlassPanel from "../components/GlassPanel";
 
-const demoAccounts = [
+const quickAccessAccounts = [
   { role: "Farmer", email: "farmer@aivillagebrain.com", password: "Farmer@123" },
   { role: "Admin", email: "admin@aivillagebrain.com", password: "Admin@123" }
 ];
@@ -20,8 +20,8 @@ export default function LoginPage() {
   const [pending, setPending] = useState(false);
   const [form, setForm] = useState({
     name: "",
-    email: demoAccounts[0].email,
-    password: demoAccounts[0].password,
+    email: quickAccessAccounts[0].email,
+    password: quickAccessAccounts[0].password,
     role: "farmer"
   });
 
@@ -49,7 +49,7 @@ export default function LoginPage() {
     }
   }
 
-  function fillDemo(account) {
+  function fillQuickAccess(account) {
     setMode("login");
     setForm((current) => ({
       ...current,
@@ -77,8 +77,8 @@ export default function LoginPage() {
           <div className="mt-10 space-y-4">
             {[
               "JWT authentication with Admin / Farmer role access",
-              "Live dashboards, charts, AI modules, and real-time alert simulation",
-              "Premium startup-style UI for demos, pilots, and production extension"
+              "Live dashboards, charts, AI modules, and real-time alert workflows",
+              "Premium startup-style UI for pilots and production extension"
             ].map((item) => (
               <div key={item} className="flex items-start gap-3 rounded-[24px] border border-white/10 bg-white/5 px-4 py-4">
                 <CheckCircle2 className="mt-1 h-5 w-5 text-primary-200" />
@@ -88,13 +88,13 @@ export default function LoginPage() {
           </div>
 
           <div className="mt-10 rounded-[28px] border border-white/10 bg-white/6 p-5">
-            <p className="text-xs uppercase tracking-[0.22em] text-primary-100/60">Demo credentials</p>
+            <p className="text-xs uppercase tracking-[0.22em] text-primary-100/60">Quick access credentials</p>
             <div className="mt-4 space-y-3">
-              {demoAccounts.map((account) => (
+              {quickAccessAccounts.map((account) => (
                 <button
                   key={account.role}
                   type="button"
-                  onClick={() => fillDemo(account)}
+                  onClick={() => fillQuickAccess(account)}
                   className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left transition hover:bg-white/10"
                 >
                   <div>

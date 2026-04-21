@@ -1,27 +1,27 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import {
-  getWeatherSimulation,
-  simulateFirebase,
-  simulateVoice,
-  simulateWhatsApp
+  deliverWhatsAppMessage,
+  generateVoiceAdvisory,
+  getWeatherSnapshot,
+  queueFirebaseNotification
 } from "../services/integrationService.js";
 
 export const weather = asyncHandler(async (req, res) => {
-  const data = getWeatherSimulation(req.query.location);
+  const data = getWeatherSnapshot(req.query.location);
   res.json({ success: true, data });
 });
 
 export const whatsapp = asyncHandler(async (req, res) => {
-  const data = simulateWhatsApp(req.body);
+  const data = deliverWhatsAppMessage(req.body);
   res.json({ success: true, data });
 });
 
 export const voice = asyncHandler(async (req, res) => {
-  const data = simulateVoice(req.body);
+  const data = generateVoiceAdvisory(req.body);
   res.json({ success: true, data });
 });
 
 export const firebase = asyncHandler(async (req, res) => {
-  const data = simulateFirebase(req.body);
+  const data = queueFirebaseNotification(req.body);
   res.json({ success: true, data });
 });

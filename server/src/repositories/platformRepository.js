@@ -1,6 +1,7 @@
 import { Alert } from "../models/Alert.js";
 import { ContactLead } from "../models/ContactLead.js";
 import { Farm } from "../models/Farm.js";
+import { PlatformSetting } from "../models/PlatformSetting.js";
 import { Prediction } from "../models/Prediction.js";
 import { SensorData } from "../models/SensorData.js";
 import { User } from "../models/User.js";
@@ -12,8 +13,55 @@ const mockStore = {
   sensorData: [],
   predictions: [],
   alerts: [],
-  contactLeads: []
+  contactLeads: [],
+  platformSettings: null
 };
+
+export const defaultPlatformSettings = {
+  key: "main",
+  announcement: {
+    enabled: true,
+    text: "New subsidy scheme available - Apply now",
+    link: "/#contact"
+  },
+  contact: {
+    phone: "+91 9509868673",
+    whatsappNumber: "919509868673",
+    email: "support@aivillagebrain.com",
+    location: "India",
+    workingHours: "Mon - Fri: 9:00 AM to 6:00 PM"
+  },
+  content: {
+    heroTitle: "Smart AI Farming Starts Here",
+    heroSubtitle:
+      "Crop intelligence, sensors, satellite signals, and market timing in one command layer.",
+    featuresHeadline:
+      "Built for modern farm intelligence across advice, monitoring, and automation",
+    footerDescription:
+      "A premium agriculture SaaS platform bringing together AI advisory, sensor intelligence, satellite monitoring, and operator-ready analytics."
+  },
+  aiKeys: {
+    openAiKey: "",
+    weatherApiKey: "",
+    satelliteProviderKey: "",
+    whatsappToken: "",
+    firebaseServerKey: ""
+  }
+};
+
+function mergeDeep(target, source) {
+  const output = { ...target };
+
+  for (const [key, value] of Object.entries(source || {})) {
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      output[key] = mergeDeep(output[key] || {}, value);
+    } else if (value !== undefined) {
+      output[key] = value;
+    }
+  }
+
+  return output;
+}
 
 function createId(prefix) {
   return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
@@ -163,6 +211,32 @@ export async function listUsers() {
 
   const users = await User.find().sort({ createdAt: -1 }).lean();
   return users.map((user) => sanitizeUser(user, { includeAliases: true }));
+}
+
+export async function updateUser(userId, payload) {
+  const allowed = {};
+
+  for (const key of ["name", "role", "subscriptionPlan", "farmCount", "language"]) {
+    if (payload[key] !== undefined) {
+      allowed[key] = payload[key];
+    }
+  }
+
+  allowed.updatedAt = new Date();
+
+  if (isMockDatabase()) {
+    const user = mockStore.users.find((item) => String(item._id) === String(userId));
+
+    if (!user) {
+      return null;
+    }
+
+    Object.assign(user, allowed);
+    return sanitizeUser(user, { includeAliases: true });
+  }
+
+  const user = await User.findByIdAndUpdate(userId, allowed, { new: true }).lean();
+  return sanitizeUser(user, { includeAliases: true });
 }
 
 export async function createFarm(payload) {
@@ -343,4 +417,44 @@ export async function listContactLeads(options = {}) {
 
 export async function countContactLeads() {
   return isMockDatabase() ? mockStore.contactLeads.length : ContactLead.countDocuments();
+}
+
+export async function getPlatformSettings() {
+  if (isMockDatabase()) {
+    if (!mockStore.platformSettings) {
+      mockStore.platformSettings = createTimestampedRecord("settings", defaultPlatformSettings);
+    }
+
+    return toPlain(mockStore.platformSettings);
+  }
+
+  const settings = await PlatformSetting.findOneAndUpdate(
+    { key: "main" },
+    { $setOnInsert: defaultPlatformSettings },
+    { new: true, upsert: true }
+  ).lean();
+
+  return toPlain(settings);
+}
+
+export async function updatePlatformSettings(payload) {
+  const current = await getPlatformSettings();
+  const merged = mergeDeep(current, payload);
+  merged.key = "main";
+  merged.updatedAt = new Date();
+
+  if (isMockDatabase()) {
+    mockStore.platformSettings = merged;
+    return toPlain(mockStore.platformSettings);
+  }
+
+  const { _id, createdAt, ...updatePayload } = merged;
+
+  const settings = await PlatformSetting.findOneAndUpdate(
+    { key: "main" },
+    { $set: updatePayload },
+    { new: true, upsert: true }
+  ).lean();
+
+  return toPlain(settings);
 }

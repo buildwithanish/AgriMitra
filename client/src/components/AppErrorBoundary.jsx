@@ -13,9 +13,7 @@ export default class AppErrorBoundary extends React.Component {
     };
   }
 
-  componentDidCatch(error) {
-    console.error("AI Village Brain render error:", error);
-  }
+  componentDidCatch() {}
 
   render() {
     if (this.state.hasError) {
@@ -29,8 +27,7 @@ export default class AppErrorBoundary extends React.Component {
               The frontend hit a render issue
             </h1>
             <p className="mt-4 text-sm leading-7 text-slate-600 dark:text-slate-300">
-              Refresh once after the latest deployment. If the issue persists, check the browser console for the exact
-              component error.
+              Refresh once after the latest deployment. If the issue persists, share this message with the support team.
             </p>
             <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-left text-sm text-red-700 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-200">
               {this.state.errorMessage}

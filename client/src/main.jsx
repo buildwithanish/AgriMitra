@@ -8,6 +8,7 @@ import AppErrorBoundary from "./components/AppErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ContactModalProvider } from "./contexts/ContactModalContext";
+import { SettingsProvider } from "./contexts/SettingsContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -15,9 +16,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <BrowserRouter>
         <ThemeProvider>
           <ContactModalProvider>
-            <AuthProvider>
-              <App />
-            </AuthProvider>
+            <SettingsProvider>
+              <AuthProvider>
+                <App />
+              </AuthProvider>
+            </SettingsProvider>
           </ContactModalProvider>
         </ThemeProvider>
       </BrowserRouter>

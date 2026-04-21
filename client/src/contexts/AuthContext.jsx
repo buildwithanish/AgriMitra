@@ -17,8 +17,7 @@ export function AuthProvider({ children }) {
     if (rawUser) {
       try {
         setUser(JSON.parse(rawUser));
-      } catch (error) {
-        console.warn("Invalid stored auth user found. Clearing local session.", error);
+      } catch {
         localStorage.removeItem("ai-village-brain-user");
         localStorage.removeItem("ai-village-brain-token");
       }

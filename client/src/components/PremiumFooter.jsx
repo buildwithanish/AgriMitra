@@ -9,6 +9,7 @@ import {
   footerTopLinks
 } from "../data/marketing";
 import { useContactModal } from "../contexts/ContactModalContext";
+import { useSettings } from "../contexts/SettingsContext";
 
 function FooterHeading({ children }) {
   return (
@@ -39,6 +40,7 @@ function StoreButton({ href, eyebrow, label, icon: Icon }) {
 
 export default function PremiumFooter() {
   const { openContactModal } = useContactModal();
+  const { settings } = useSettings();
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
@@ -67,6 +69,14 @@ export default function PremiumFooter() {
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-[repeat(3,minmax(0,1fr))_auto] xl:items-center">
               {footerContactStrip.map((item) => {
                 const Icon = item.icon;
+                const value =
+                  item.title === "Phone"
+                    ? settings.contact.phone
+                    : item.title === "Email"
+                      ? settings.contact.email
+                      : item.title === "Location"
+                        ? settings.contact.location
+                        : item.value;
 
                 return (
                   <div
@@ -80,7 +90,7 @@ export default function PremiumFooter() {
                       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
                         {item.title}
                       </p>
-                      <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-white">{item.value}</p>
+                      <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-white">{value}</p>
                     </div>
                   </div>
                 );
@@ -112,7 +122,7 @@ export default function PremiumFooter() {
               </div>
 
               <p className="max-w-sm text-sm leading-7 text-slate-600 dark:text-slate-300">
-                A premium agriculture SaaS platform bringing together AI advisory, sensor intelligence, satellite monitoring, and operator-ready analytics.
+                {settings.content.footerDescription}
               </p>
 
               <form onSubmit={handleSubscribe} className="space-y-3">
@@ -193,7 +203,9 @@ export default function PremiumFooter() {
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
                       {entry.label}
                     </p>
-                    <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-white">{entry.value}</p>
+                    <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-white">
+                      {entry.label === "Mon - Fri" ? settings.contact.workingHours : entry.value}
+                    </p>
                   </div>
                 ))}
               </div>

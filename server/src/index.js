@@ -3,12 +3,12 @@ import { Server } from "socket.io";
 import app from "./app.js";
 import { env } from "./config/env.js";
 import { connectDatabase, getDatabaseMode } from "./config/database.js";
-import { seedDemoData } from "./services/demoSeeder.js";
+import { seedInitialData } from "./services/demoSeeder.js";
 import { registerAlertSocket } from "./sockets/alertsSocket.js";
 
 async function startServer() {
   await connectDatabase();
-  await seedDemoData();
+  await seedInitialData();
 
   const server = http.createServer(app);
   const io = new Server(server, {

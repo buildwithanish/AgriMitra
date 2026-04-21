@@ -1,9 +1,28 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import SectionHeading from "../components/SectionHeading";
 import FeatureCard from "../components/FeatureCard";
 import { platformFeatures } from "../data/content";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function FeaturesPage() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  function openFeature() {
+    if (user?.role === "farmer") {
+      navigate("/dashboard#farmer-features");
+      return;
+    }
+
+    if (user?.role === "admin") {
+      navigate("/admin#admin-ai");
+      return;
+    }
+
+    navigate("/login");
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -18,7 +37,7 @@ export default function FeaturesPage() {
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-8 text-primary-50/80">
           Every feature below is implemented as part of the web experience and backed by modular API endpoints
-          so you can extend the product from demo-ready to production-ready.
+          so the product can scale from pilot deployments to production operations.
         </p>
       </div>
 
@@ -31,7 +50,7 @@ export default function FeaturesPage() {
 
         <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {platformFeatures.map((feature, index) => (
-            <FeatureCard key={feature.title} feature={feature} index={index} />
+            <FeatureCard key={feature.title} feature={feature} index={index} onClick={openFeature} />
           ))}
         </div>
       </section>

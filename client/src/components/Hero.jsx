@@ -3,12 +3,14 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, ChevronLeft, ChevronRight, Sparkles, Waves } from "lucide-react";
 import { premiumHeroSlides } from "../data/marketing";
 import { useContactModal } from "../contexts/ContactModalContext";
+import { useSettings } from "../contexts/SettingsContext";
 
 export default function Hero() {
   const { openContactModal } = useContactModal();
+  const { settings } = useSettings();
   const [activeSlide, setActiveSlide] = useState(0);
 
-  function openWhatsAppDemo() {
+  function openWhatsAppAssistant() {
     if (typeof window !== "undefined") {
       window.dispatchEvent(new CustomEvent("aivb:open-whatsapp"));
     }
@@ -23,6 +25,14 @@ export default function Hero() {
   }, []);
 
   const slide = premiumHeroSlides[activeSlide];
+  const displaySlide =
+    activeSlide === 0
+      ? {
+          ...slide,
+          title: settings.content.heroTitle || slide.title,
+          description: settings.content.heroSubtitle || slide.description
+        }
+      : slide;
 
   function renderHeroAction(href, label, className, showArrow = false) {
     if (href === "/#contact") {
@@ -36,7 +46,7 @@ export default function Hero() {
 
     if (href === "/#whatsapp") {
       return (
-        <button type="button" onClick={openWhatsAppDemo} className={className}>
+        <button type="button" onClick={openWhatsAppAssistant} className={className}>
           {label}
           {showArrow && <ArrowRight className="h-4 w-4" />}
         </button>
@@ -56,7 +66,7 @@ export default function Hero() {
       <div className="relative overflow-hidden border-y border-white/60 shadow-[0_40px_120px_rgba(7,23,15,0.18)] sm:mx-4 sm:rounded-[40px] sm:border lg:mx-6 xl:mx-8">
         <div
           className="absolute inset-0 bg-cover bg-center transition-transform duration-700"
-          style={{ backgroundImage: `url(${slide.image})` }}
+          style={{ backgroundImage: `url(${displaySlide.image})` }}
         />
         <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(7,23,15,0.86),rgba(7,23,15,0.45)_45%,rgba(7,23,15,0.25))]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(92,193,130,0.28),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(243,179,0,0.16),transparent_28%)]" />
@@ -64,7 +74,7 @@ export default function Hero() {
         <div className="relative grid min-h-[620px] gap-8 p-6 sm:p-8 lg:grid-cols-[1.1fr_0.9fr] lg:p-10 xl:min-h-[680px] xl:p-12">
           <AnimatePresence mode="wait">
             <motion.div
-              key={slide.id}
+              key={displaySlide.id}
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -24 }}
@@ -73,32 +83,32 @@ export default function Hero() {
             >
               <span className="inline-flex w-max items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.26em] text-primary-50">
                 <Sparkles className="h-3.5 w-3.5" />
-                {slide.eyebrow}
+                {displaySlide.eyebrow}
               </span>
 
               <h1 className="mt-6 max-w-3xl font-display text-4xl font-bold leading-tight text-white sm:text-5xl xl:text-6xl">
-                {slide.title}
+                {displaySlide.title}
               </h1>
               <p className="mt-5 max-w-2xl text-base leading-8 text-primary-50/82 sm:text-lg">
-                {slide.description}
+                {displaySlide.description}
               </p>
 
               <div className="mt-8 flex flex-wrap gap-4">
                 {renderHeroAction(
-                  slide.primaryHref,
-                  slide.primaryCta,
+                  displaySlide.primaryHref,
+                  displaySlide.primaryCta,
                   "inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-primary-950 transition hover:-translate-y-0.5",
                   true
                 )}
                 {renderHeroAction(
-                  slide.secondaryHref,
-                  slide.secondaryCta,
+                  displaySlide.secondaryHref,
+                  displaySlide.secondaryCta,
                   "inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-white/15"
                 )}
               </div>
 
               <div className="mt-10 grid max-w-xl gap-4 sm:grid-cols-2">
-                {slide.metrics.map((metric) => (
+                {displaySlide.metrics.map((metric) => (
                   <div
                     key={metric.label}
                     className="rounded-[24px] border border-white/12 bg-white/10 p-4 text-white backdrop-blur-xl"

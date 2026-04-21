@@ -138,7 +138,7 @@ export function getCropHealthScore(input = {}) {
     band: score > 85 ? "Healthy" : score > 72 ? "Watchlist" : "At risk",
     stressHotspots: ["North-east boundary", "Low-lying corner near canal"],
     ndvi: ndvi.toFixed(2),
-    note: "Satellite simulation suggests localized stress rather than whole-field decline."
+    note: "Satellite-style health scoring suggests localized stress rather than whole-field decline."
   };
 }
 

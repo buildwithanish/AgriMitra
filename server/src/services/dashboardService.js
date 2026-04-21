@@ -5,7 +5,7 @@ import {
   listSensorData,
   listUsers
 } from "../repositories/platformRepository.js";
-import { getWeatherSimulation } from "./integrationService.js";
+import { getWeatherSnapshot } from "./integrationService.js";
 
 export async function getFarmerDashboardData(userId) {
   const farm = await findFarmByOwner(userId);
@@ -17,7 +17,7 @@ export async function getFarmerDashboardData(userId) {
 
   const latestMoisture =
     sensorData.find((sensor) => sensor.sensorType.toLowerCase().includes("moisture"))?.value || 41;
-  const weather = getWeatherSimulation(
+  const weather = getWeatherSnapshot(
     farm ? `${farm.location.district || "Nashik"}, ${farm.location.state || "Maharashtra"}` : undefined
   );
 

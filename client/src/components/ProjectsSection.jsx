@@ -30,6 +30,7 @@ export default function ProjectsSection() {
                 <img
                   src={project.image}
                   alt={project.title}
+                  loading="lazy"
                   className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent" />

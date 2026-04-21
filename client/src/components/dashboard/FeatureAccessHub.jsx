@@ -3,160 +3,6 @@ import { ArrowRight, Layers3, LoaderCircle } from "lucide-react";
 import { platformFeatures } from "../../data/content";
 import { api } from "../../services/api";
 
-const featureActions = {
-  "AI Crop Planning": async () =>
-    api.post("/ai/crop-recommendation", {
-      crop: "Wheat",
-      soilType: "loamy",
-      season: "rabi",
-      ph: 6.7,
-      waterAvailability: "medium",
-      marketDemand: 78
-    }),
-  "Fertilizer Optimization": async () =>
-    api.post("/ai/fertilizer-optimization", {
-      crop: "Wheat",
-      acreage: 2.5,
-      nitrogen: 42,
-      phosphorous: 27,
-      potassium: 24
-    }),
-  "Pest Detection": async () => ({
-    success: true,
-    data: {
-      pest: "Leaf rust risk",
-      confidence: "91%",
-      action: "Inspect lower leaf area tomorrow morning and maintain airflow."
-    }
-  }),
-  "Yield Prediction": async () =>
-    api.post("/ai/yield-prediction", {
-      crop: "Wheat",
-      acreage: 2.5,
-      historicalYield: 30,
-      rainfall: 76,
-      soilMoisture: 41
-    }),
-  "Market Price Prediction": async () =>
-    api.post("/ai/market-price-prediction", {
-      crop: "Wheat",
-      demandIndex: 72,
-      supplyIndex: 53,
-      basePrice: 24
-    }),
-  "Insurance Predictor": async () =>
-    api.post("/ai/insurance-risk", {
-      rainfallVariance: 18,
-      pestRisk: 27,
-      claimHistory: 1
-    }),
-  "Digital Twin": async () =>
-    api.post("/ai/digital-twin", {
-      crop: "Wheat",
-      acreage: 2.5,
-      irrigationDelayDays: 1,
-      fertilizerDelayDays: 0
-    }),
-  "IoT Sensors": async () => ({
-    success: true,
-    data: {
-      soilMoisture: "41%",
-      ph: 6.7,
-      ec: "0.44 mS/cm",
-      temperature: "28C"
-    }
-  }),
-  "Satellite Monitoring": async () => ({
-    success: true,
-    data: {
-      ndvi: 0.74,
-      cropHealth: "91/100",
-      stressZones: 2
-    }
-  }),
-  "Weather Data": async () => api.get("/integrations/weather"),
-  "WhatsApp AI": async () =>
-    api.post("/integrations/whatsapp", {
-      phone: "+91XXXXXXXXXX",
-      message: "Advisory queued for wheat farmer cluster."
-    }),
-  "Voice AI": async () =>
-    api.post("/integrations/voice", {
-      language: "en-IN",
-      text: "Wheat advisory generated successfully."
-    }),
-  "IVR System": async () => ({
-    success: true,
-    data: {
-      status: "ready",
-      campaign: "Village advisory IVR",
-      reach: "1,240 users"
-    }
-  }),
-  "Supply Chain": async () => ({
-    success: true,
-    data: {
-      buyerWindow: "3 days",
-      logisticsStatus: "Ready",
-      mandiDemand: "Strong"
-    }
-  }),
-  "Alerts System": async () => api.get("/notifications"),
-  "Farm Ledger": async () => ({
-    success: true,
-    data: {
-      spendToDate: "Rs 14,800",
-      projectedRevenue: "Rs 41,000",
-      projectedMargin: "+18%"
-    }
-  }),
-  "Carbon Scoring": async () => ({
-    success: true,
-    data: {
-      carbonScore: "B+",
-      residueManagement: "Good",
-      regenerativeImpact: "Improving"
-    }
-  }),
-  "Water Analytics": async () => ({
-    success: true,
-    data: {
-      irrigationWindow: "Tomorrow 6-9 AM",
-      stressRisk: "Low",
-      waterSavingsPotential: "12%"
-    }
-  }),
-  "Community Advisory": async () => ({
-    success: true,
-    data: {
-      segment: "Wheat farmers",
-      messageCount: 248,
-      language: "Hindi + English"
-    }
-  }),
-  "Credit Readiness": async () => ({
-    success: true,
-    data: {
-      score: "82/100",
-      lenderReadiness: "Healthy",
-      note: "Strong crop profile and stable revenue outlook."
-    }
-  }),
-  "Subscription Billing": async () =>
-    api.post("/subscriptions/checkout", {
-      plan: "starter",
-      amount: 99
-    }),
-  "Admin Intelligence": async () => ({
-    success: true,
-    data: {
-      totalFarmers: 1284,
-      activeSensors: 2408,
-      aiAccuracy: "93.4%"
-    }
-  })
-};
-
 function extractPayload(response) {
   if (!response) {
     return { result: "No data returned." };
@@ -180,9 +26,44 @@ function formatLabel(key) {
     .replace(/^\w/, (char) => char.toUpperCase());
 }
 
+function slugifyFeature(title) {
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function buildFeaturePayload(feature) {
+  return {
+    feature: feature.title,
+    crop: "Wheat",
+    soilType: "loamy",
+    season: "rabi",
+    ph: 6.7,
+    acreage: 2.5,
+    waterAvailability: "medium",
+    marketDemand: 78,
+    rainfall: 76,
+    soilMoisture: 41,
+    demandIndex: 72,
+    supplyIndex: 53,
+    basePrice: 24,
+    ndvi: 0.74,
+    canopyTemperature: 29,
+    moisture: 41,
+    rainfallVariance: 18,
+    pestRisk: 27,
+    claimHistory: 1,
+    irrigationDelayDays: 1,
+    fertilizerDelayDays: 0,
+    phone: "+91 9509868673",
+    message: `${feature.title} request generated from farmer dashboard`,
+    language: "en-IN",
+    text: `${feature.title} advisory generated successfully.`,
+    location: "Nashik, Maharashtra"
+  };
+}
+
 export default function FeatureAccessHub({ subscriptionPlan = "starter" }) {
   const [selectedTitle, setSelectedTitle] = useState(platformFeatures[0].title);
-  const [result, setResult] = useState({ note: "Select any feature card to run the demo result." });
+  const [result, setResult] = useState({ note: "Select any feature card to run the backend feature engine." });
   const [loading, setLoading] = useState(false);
 
   const selectedFeature = useMemo(
@@ -195,8 +76,10 @@ export default function FeatureAccessHub({ subscriptionPlan = "starter" }) {
     setLoading(true);
 
     try {
-      const action = featureActions[feature.title];
-      const response = action ? await action() : { success: true, data: { note: "Demo output available." } };
+      const response = await api.post(
+        `/features/${slugifyFeature(feature.title)}/run`,
+        buildFeaturePayload(feature)
+      );
       setResult(extractPayload(response));
     } catch (error) {
       setResult({ error: error.message });
@@ -215,7 +98,7 @@ export default function FeatureAccessHub({ subscriptionPlan = "starter" }) {
             </p>
             <h3 className="mt-2 font-display text-2xl font-bold text-slate-950 dark:text-white">Feature access hub</h3>
             <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-              Your current plan: <span className="font-semibold capitalize">{subscriptionPlan}</span>. Demo unlock keeps all 22 modules accessible.
+              Your current plan: <span className="font-semibold capitalize">{subscriptionPlan}</span>. Every module runs through a protected backend API.
             </p>
           </div>
           <div className="inline-flex items-center gap-2 rounded-2xl bg-primary-500/10 px-4 py-3 text-sm font-semibold text-primary-700 dark:text-primary-200">

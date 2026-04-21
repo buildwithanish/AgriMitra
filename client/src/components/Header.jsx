@@ -8,13 +8,16 @@ import {
   Clock3,
   Mail,
   Menu,
+  PhoneCall,
   ShoppingCart,
   Sprout,
   X
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useContactModal } from "../contexts/ContactModalContext";
+import { useSettings } from "../contexts/SettingsContext";
 import { headerNavigation, topBarInfo } from "../data/marketing";
+import AnnouncementBar from "./AnnouncementBar";
 
 function DesktopLink({ item, onContactClick }) {
   if (item.action === "contact-modal") {
@@ -369,6 +372,7 @@ export default function Header() {
   const location = useLocation();
   const { user } = useAuth();
   const { openContactModal } = useContactModal();
+  const { settings } = useSettings();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState("");
   const [openItem, setOpenItem] = useState("");
@@ -391,6 +395,7 @@ export default function Header() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
+      <AnnouncementBar />
       <div className="hidden border-b border-slate-200 bg-white/95 md:block dark:border-slate-800 dark:bg-slate-950/95">
         <div className="section-shell flex items-center justify-between gap-4 py-3 text-sm">
           <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
@@ -404,13 +409,17 @@ export default function Header() {
             </button>
           </div>
           <div className="flex items-center gap-5 text-slate-500 dark:text-slate-400">
-            <a href={`mailto:${topBarInfo.email}`} className="inline-flex items-center gap-2 transition hover:text-primary-700 dark:hover:text-primary-300">
+            <a href={`mailto:${settings.contact.email}`} className="inline-flex items-center gap-2 transition hover:text-primary-700 dark:hover:text-primary-300">
               <Mail className="h-4 w-4 text-primary-600 dark:text-primary-300" />
-              {topBarInfo.email}
+              {settings.contact.email}
+            </a>
+            <a href={`tel:${settings.contact.phone.replace(/\s/g, "")}`} className="inline-flex items-center gap-2 transition hover:text-primary-700 dark:hover:text-primary-300">
+              <PhoneCall className="h-4 w-4 text-primary-600 dark:text-primary-300" />
+              {settings.contact.phone}
             </a>
             <span className="inline-flex items-center gap-2">
               <Clock3 className="h-4 w-4 text-primary-600 dark:text-primary-300" />
-              {topBarInfo.hours}
+              {settings.contact.workingHours || topBarInfo.hours}
             </span>
           </div>
         </div>

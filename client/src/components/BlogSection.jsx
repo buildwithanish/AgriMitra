@@ -30,6 +30,7 @@ export default function BlogSection() {
                 <img
                   src={post.image}
                   alt={post.title}
+                  loading="lazy"
                   className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/15 to-transparent" />

@@ -18,13 +18,13 @@ export async function connectDatabase() {
       throw error;
     }
 
-    databaseMode = "mock";
-    console.warn("MongoDB unavailable. Starting AI Village Brain API in mock database mode.");
+    databaseMode = "memory";
+    console.warn("MongoDB unavailable. Starting AI Village Brain API in temporary memory DB mode.");
   }
 }
 
 export function isMockDatabase() {
-  return databaseMode === "mock";
+  return databaseMode === "memory";
 }
 
 export function getDatabaseMode() {

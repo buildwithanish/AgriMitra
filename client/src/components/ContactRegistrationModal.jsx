@@ -1,8 +1,10 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, Mail, Phone, UserRound, X } from "lucide-react";
 import { api } from "../services/api";
 import { useContactModal } from "../contexts/ContactModalContext";
+import { useAuth } from "../contexts/AuthContext";
+import { useSettings } from "../contexts/SettingsContext";
 
 const roleOptions = [
   { value: "farmer", label: "Farmer" },
@@ -13,13 +15,15 @@ const roleOptions = [
 
 const interestOptions = [
   { value: "starter-plan", label: "Starter Plan" },
-  { value: "enterprise-demo", label: "Enterprise Demo" },
+  { value: "enterprise-consultation", label: "Enterprise Consultation" },
   { value: "dashboard-access", label: "Dashboard Access" },
   { value: "integration-help", label: "Integration Help" }
 ];
 
 export default function ContactRegistrationModal() {
   const { isContactModalOpen, closeContactModal } = useContactModal();
+  const { user } = useAuth();
+  const { settings } = useSettings();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -32,6 +36,22 @@ export default function ContactRegistrationModal() {
   const [feedback, setFeedback] = useState("");
 
   const canSubmit = useMemo(() => form.name.trim() && form.email.trim(), [form]);
+  const whatsappHref = `https://wa.me/${settings.contact.whatsappNumber}?text=${encodeURIComponent(
+    "Hi AI Village Brain, I want to know more about the agriculture AI platform."
+  )}`;
+
+  useEffect(() => {
+    if (!isContactModalOpen || !user) {
+      return;
+    }
+
+    setForm((current) => ({
+      ...current,
+      name: current.name || user.name || "",
+      email: current.email || user.email || "",
+      role: current.role || user.role || "farmer"
+    }));
+  }, [isContactModalOpen, user]);
 
   function updateField(event) {
     const { name, value } = event.target;
@@ -50,6 +70,8 @@ export default function ContactRegistrationModal() {
     try {
       const response = await api.post("/contact", {
         ...form,
+        name: form.name || user?.name || "",
+        email: form.email || user?.email || "",
         source: "contact-modal"
       });
 
@@ -107,13 +129,21 @@ export default function ContactRegistrationModal() {
                 </div>
 
                 <p className="mt-5 text-sm leading-7 text-primary-50/80">
-                  Fill in your details and our team will help you with onboarding, demo access, dashboard setup, and
+                  Fill in your details and our team will help you with onboarding, platform access, dashboard setup, and
                   subscription guidance.
                 </p>
+                <a
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-5 inline-flex items-center justify-center rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-primary-800 transition hover:-translate-y-0.5"
+                >
+                  WhatsApp direct: {settings.contact.phone}
+                </a>
 
                 <div className="mt-8 space-y-4">
                   {[
-                    "Quick registration for farmer or enterprise demos",
+                    "Quick registration for farmer or enterprise consultations",
                     "Admin dashboard can review every incoming contact request",
                     "Works for local and live website deployments"
                   ].map((item) => (
@@ -166,7 +196,7 @@ export default function ContactRegistrationModal() {
                         name="phone"
                         value={form.phone}
                         onChange={updateField}
-                        placeholder="+91 98765 43210"
+                        placeholder="+91 9509868673"
                         className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-11 pr-4 outline-none transition focus:border-primary-500 dark:border-white/10 dark:bg-white/5"
                       />
                     </div>
