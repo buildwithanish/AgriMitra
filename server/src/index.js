@@ -13,7 +13,7 @@ async function startServer() {
   const server = http.createServer(app);
   const io = new Server(server, {
     cors: {
-      origin: env.clientUrl,
+      origin: env.clientUrls,
       methods: ["GET", "POST"]
     }
   });

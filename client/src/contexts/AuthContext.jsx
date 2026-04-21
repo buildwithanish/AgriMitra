@@ -8,10 +8,22 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (typeof window === "undefined") {
+      setLoading(false);
+      return;
+    }
+
     const rawUser = localStorage.getItem("ai-village-brain-user");
     if (rawUser) {
-      setUser(JSON.parse(rawUser));
+      try {
+        setUser(JSON.parse(rawUser));
+      } catch (error) {
+        console.warn("Invalid stored auth user found. Clearing local session.", error);
+        localStorage.removeItem("ai-village-brain-user");
+        localStorage.removeItem("ai-village-brain-token");
+      }
     }
+
     setLoading(false);
   }, []);
 
